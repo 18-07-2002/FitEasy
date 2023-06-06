@@ -1,12 +1,5 @@
-# Welcome to the FitEasy!
+Enter the realm of FitEasy, a sanctuary where health pursuits and technological wonders blend seamlessly. Prepare for a transformational journey while immersing yourself in a world of mastery, effortlessly tracking your strength, cardio and isometric exercises like never before.
 
+Experience the power at your fingertips with an intuitive interface that gives you the freedom to create an unlimited number of customized vehicles. These virtual companions have names of your choice and offer whispers of encouragement as you navigate the world of fitness. The reins are in your hands to shape your fitness destiny. Reveal the evolution of your physique and the achievements of your dedication in vivid graphics, and experience a stunning visual representation of your progress. Every step forward is immortalized in this digital oasis, inspiring you to push boundaries and overcome them on your journey to optimal health.
 
-## Track your progress (strengh, cardio and isometric) quickly and easily
-
-Now you can track your progress easily and quickly!
-You can create as many machines as you want with the name you want!
-It's your choice!
-
-Graphics will show your progress and your body evolution.
-
-Don't leave the app to get your music : a music player is integrated into the app!
+But wait, there's more! A harmonious blend of fitness and melodic magic happens within the framework of this all-encompassing application. A seamless music player awaits inside you, so you'll never have to disconnect from the app again to find comfort in the rhythm. Your chosen song becomes a symphony that accompanies every workout, blending seamlessly with your beating heart. So, dear wellness seekers, let FitEasy be your guide to wellness. Enjoy simple progress tracking, indulge in the thrill of visual representations of physical development, and immerse yourself in the melodic embrace of the integrated music player. With FitEasy as your companion, your fitness journey knows no boundaries and progress opens up to a world where harmony between body and mind is paramount. 
