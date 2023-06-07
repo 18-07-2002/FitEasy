@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
-    <string name="app_version" translatable="false">0.20.5.1</string>
+    <string name="app_name" translatable="false">FitEasy</string>
+    <string name="app_version" translatable="false">0.23.5.19</string>
     <string name="database_version_label" translatable="false">Database version: </string>
-    <string name="copyright" translatable="false">Copyright(c) 2022 - IT SOURCE CODE - All rights reserved.</string>
-    <string name="author" translatable="false">Jude Suarez</string>
+    <string name="copyright" translatable="false">Copyright(c) 2023 - IT SOURCE CODE - All rights reserved.</string>
+    <string name="author" translatable="false">Swayam Arunav Khuntia</string>
     <string name="opensource_label" translatable="false">Open-source URL: </string>
-    <string name="opensource_url" translatable="false">https://itsourcecode.com</string>
+    <string name="opensource_url" translatable="false">https://github.com/18-07-2002/FitEasy</string>
     <string name="email_label" translatable="false">Contact the developer:</string>
-    <string name="email_url" translatable="false">suarez081119@gmail.com</string>
+    <string name="email_url" translatable="false">khuntiaswayam@gmail.com</string>
 
 </resources>

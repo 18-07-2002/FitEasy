@@ -35,7 +35,7 @@
                 android:id="@+id/StrenghSelector"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/record_background_odd"
+                android:background="@color/background"
                 android:gravity="center"
                 android:text="@string/strength_category"
                 app:autoSizeMaxTextSize="14sp"
@@ -56,6 +56,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@string/CardioLabel"
+                android:textColor="#E91E63"
                 app:autoSizeMaxTextSize="14sp"
                 app:autoSizeTextType="uniform" />
 

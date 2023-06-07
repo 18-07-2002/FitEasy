@@ -48,7 +48,7 @@ public class MainIntroActivity extends IntroActivity {
         addSlide(new SimpleSlide.Builder()
                 .title(R.string.introSlide1Title)
                 .description(R.string.introSlide1Text)
-                .image(R.drawable.web_hi_res_512)
+                .image(R.drawable.fiteasy)
                 .background(R.color.launcher_background)
                 .backgroundDark(R.color.launcher_background)
                 .scrollable(true)
@@ -71,15 +71,15 @@ public class MainIntroActivity extends IntroActivity {
                 .backgroundDark(R.color.launcher_background)
                 .scrollable(true)
                 .build());
-
-        addSlide(new SimpleSlide.Builder()
-                .title(R.string.titleSlideOpenSource)
-                .description(R.string.textSlideOpenSource)
-                .image(R.drawable.group_hi_res_512)
-                .background(R.color.launcher_background)
-                .backgroundDark(R.color.launcher_background)
-                .scrollable(true)
-                .build());
+//
+//        addSlide(new SimpleSlide.Builder()
+//                .title(R.string.titleSlideOpenSource)
+//                .description(R.string.textSlideOpenSource)
+//                .image(R.drawable.group_hi_res_512)
+//                .background(R.color.launcher_background)
+//                .backgroundDark(R.color.launcher_background)
+//                .scrollable(true)
+//                .build());
 
 /*
         final Slide permissionsSlide;

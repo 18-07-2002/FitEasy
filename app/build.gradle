@@ -45,7 +45,7 @@ android {
                 signingConfig signingConfigs.release
             }
             buildConfigField "Boolean", "DEBUG_MODE", "false"
-            resValue "string", "app_name", "Fast N Fitness"
+            resValue "string", "app_name", "FitEasy"
         }
         debug {
             resValue("bool", "FIREBASE_CRASH_ENABLED", "false")
@@ -54,7 +54,7 @@ android {
             }
             buildConfigField "Boolean", "DEBUG_MODE", "true"
             applicationIdSuffix ".debug"
-            resValue "string", "app_name", "Fast N Fitness Debug"
+            resValue "string", "app_name", "FitEasy"
         }
     }
 

@@ -285,14 +285,14 @@
     <string name="name_or_pseudo">Name/pseudonym</string>
     <string name="name_is_required">Name is required</string>
     <string name="create_a_profile">Create a profile</string>
-    <string name="introSlide1Text">Welcome to Fitness App. A quick and simple way to record your program and follow your body and exercise progression.</string>
+    <string name="introSlide1Text">Welcome to FitEasy App. A quick and simple way to record your program and follow your body and exercise progression.</string>
     <string name="introSlide2Text">Write the name of the exercise and the details, and it will be created automatically. You can find it back easily in the list.</string>
     <string name="introSlide2Title">Quick and easy</string>
     <string name="titleSlideEssential">Go to the essential</string>
     <string name="textSlideEssential">No exercises are pre-created. You create your own exercises simply depending on the name of the machine you have in your fitness place/location.</string>
     <string name="pressBackAgain">Click \"Back\" again to exit</string>
     <string name="titleSlideOpenSource">It is libre software! Use, change, copy, and share at will.</string>
-    <string name="textSlideOpenSource">Join the community and let\'s build the best fitness app together! Visit us at https://itsourcecode.com</string>
+    <string name="textSlideOpenSource">Join the community and let\'s build the best fitness app together! Visit us at https://github.com/18–07–2002/FitEasy</string>
     <string name="profileCreated">Profile created</string>
     <string name="missinginfo">Missing info</string>
     <string name="createExerciseFirst">Create an exercise first</string>

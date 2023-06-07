@@ -46,7 +46,7 @@
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="24/08/2017" />
+                tools:text="24/05/23" />
 
             <TextView
                 android:id="@+id/LIST_BODYMEASURE_WEIGHT"

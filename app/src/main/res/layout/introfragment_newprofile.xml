@@ -103,8 +103,9 @@
                     android:gravity="center_horizontal"
                     android:padding="2dp"
                     android:text="@string/femaleGender"
-                    android:textSize="20sp"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@android:color/black"
+                    android:textColorHighlight="#009688"
+                    android:textSize="20sp" />
 
                 <RadioButton
                     android:id="@+id/radioButtonOtherGender"
