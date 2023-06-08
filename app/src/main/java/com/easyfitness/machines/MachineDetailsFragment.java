@@ -376,7 +376,7 @@ public class MachineDetailsFragment extends Fragment {
                     String realPath = RealPathUtil.getRealPath(this.getContext(), resultUri);
 
                     // Le fichier est crée dans le cache.
-                    // Déplacer le fichier dans le repertoire de FastNFitness
+                    // Déplacer le fichier dans le repertoire de FitEasy
                     File SourceFile = new File(realPath);
 
                     File storageDir = null;
@@ -386,8 +386,8 @@ public class MachineDetailsFragment extends Fragment {
                     if (!Environment.MEDIA_MOUNTED.equals(state)) {
                         return;
                     } else {
-                        //We use the FastNFitness directory for saving our .csv file.
-                        storageDir = Environment.getExternalStoragePublicDirectory("/FastnFitness/Camera/");
+                        //We use the FitEasy directory for saving our .csv file.
+                        storageDir = Environment.getExternalStoragePublicDirectory("/FitEasy/Camera/");
                         if (!storageDir.exists()) {
                             storageDir.mkdirs();
                         }

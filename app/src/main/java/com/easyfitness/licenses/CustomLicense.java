@@ -10,7 +10,7 @@ import de.psdev.licensesdialog.licenses.License;
 
 public class CustomLicense extends License {
 
-    private static final long serialVersionUID = 5165684351346813168L;
+    private static final long serialVersionUID = 5165684351201813168L;
     private String mLicenseName = "";
     private String mLicenseURL = "";
 

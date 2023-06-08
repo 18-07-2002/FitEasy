@@ -136,7 +136,7 @@
     <string name="textSlideEssential">Никаких упражнений заранее не создано. Вы создаете свои собственные упражнения просто в зависимости от названия тренажера, установленного в вашем фитнес-центре / месте.</string>
     <string name="pressBackAgain">Нажмите НАЗАД еще раз, чтобы выйти</string>
     <string name="titleSlideOpenSource">Это открытый исходный код!</string>
-    <string name="textSlideOpenSource">Присоединяйтесь к сообществу и давайте вместе создадим лучшее фитнес-приложение! Посетите нас на https://github.com/brodeurlv/fastnfitness</string>
+    <string name="textSlideOpenSource">Присоединяйтесь к сообществу и давайте вместе создадим лучшее фитнес-приложение! Посетите нас на https://github.com/brodeurlv/FitEasy</string>
     <string name="profileCreated">Профиль создан</string>
     <string name="missinginfo">Информация отсутствует</string>
     <string name="createExerciseFirst">Вы должны сначала создать упражнение</string>

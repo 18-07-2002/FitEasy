@@ -4,7 +4,7 @@
     <string name="textSlideEssential">Önceden oluşturulmuş bir egzersiz programı yok. Spor yaptığın yerde bulunan makinelere göre kendi egzersiz programını oluşturabilirsin.</string>
     <string name="free_workout">Serbest antrenman</string>
     <string name="what_type_of_exercise">Ne tür bir egzersiz\?</string>
-    <string name="textSlideOpenSource">Topluluğa katıl ve birlikte en iyi fitness uygulamasını oluşturalım! Bize Github üzerinden ulaşabilirsin: https://github.com/brodeurlv/fastnfitness</string>
+    <string name="textSlideOpenSource">Topluluğa katıl ve birlikte en iyi fitness uygulamasını oluşturalım! Bize Github üzerinden ulaşabilirsin: https://github.com/brodeurlv/FitEasy</string>
     <string name="oneRepMax">1 Tekrar Maks (Tekrar &lt;= 10)</string>
     <string name="not_done">Bitmemiş</string>
     <string name="record_editor">Kayıt Düzenleyicisi</string>

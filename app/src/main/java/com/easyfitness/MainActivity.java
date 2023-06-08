@@ -464,7 +464,7 @@ public class MainActivity extends AppCompatActivity {
     @SuppressWarnings("deprecation")
     private boolean migrateToScopedStorage() {
         boolean success = true;
-        File folder = new File(Environment.getExternalStorageDirectory() + "/FastnFitness");
+        File folder = new File(Environment.getExternalStorageDirectory() + "/FitEasy");
 
         if (folder.exists()) { //migrate all pictures
             //Migrate profile pictures
@@ -521,7 +521,7 @@ public class MainActivity extends AppCompatActivity {
 
     @SuppressWarnings("deprecation")
     private void migrateDatabase() {
-        File folder = new File(Environment.getExternalStorageDirectory() + "/FastnFitness");
+        File folder = new File(Environment.getExternalStorageDirectory() + "/FitEasy");
         if (!folder.exists()) {
             mMigrationToScopedStoragedone = true;
             savePreferences();
@@ -559,7 +559,7 @@ public class MainActivity extends AppCompatActivity {
             CVSManager cvsMan = new CVSManager(getActivity().getBaseContext());
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd_H_m_s", Locale.getDefault());
             Date date = new Date();
-            String folderName = Environment.DIRECTORY_DOWNLOADS + "/FastnFitness/export/" +  dateFormat.format(date);
+            String folderName = Environment.DIRECTORY_DOWNLOADS + "/FitEasy/export/" +  dateFormat.format(date);
             if (cvsMan.exportDatabase(getCurrentProfile(),folderName)) {
                 SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
                 long currentTime = System.currentTimeMillis();

@@ -158,7 +158,7 @@
     <string name="textSlideEssential">No hay ejercicio preestablecido. Tú creas tus propios ejercicios, usando las máquinas que tengas en tu gimnasio / lugar de entrenamiento.</string>
     <string name="pressBackAgain">Vuelve atrás de nuevo para salir</string>
     <string name="titleSlideOpenSource">¡Es de código abierto!</string>
-    <string name="textSlideOpenSource">¡Únete a la comunidad y juntos construyamos una aplicación de fitness mejorada! Visítanos en https://github.com/brodeurlv/fastnfitness</string>
+    <string name="textSlideOpenSource">¡Únete a la comunidad y juntos construyamos una aplicación de fitness mejorada! Visítanos en https://github.com/brodeurlv/FitEasy</string>
     <string name="profileCreated">Perfil creado</string>
     <string name="missinginfo">Falta información</string>
     <string name="createExerciseFirst">Primero debes crear un ejercicio</string>

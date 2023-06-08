@@ -153,7 +153,7 @@
     <string name="textSlideEssential">Žádná cvičení nejsou před-vytvořena. Vytvořte vlastní cviky v závislosti na stojích, které máte k dispozici.</string>
     <string name="pressBackAgain">Stiskněte ZPĚT ještě jedou pro ukončení</string>
     <string name="titleSlideOpenSource">Toto je svobodná aplikace!</string>
-    <string name="textSlideOpenSource">Připojte se ke komunitě a společně vytvořme nejlepší fitness aplikaci! Přejděte na https://github.com/brodeurlv/fastnfitness</string>
+    <string name="textSlideOpenSource">Připojte se ke komunitě a společně vytvořme nejlepší fitness aplikaci! Přejděte na https://github.com/brodeurlv/FitEasy</string>
     <string name="profileCreated">Profil vytvořen</string>
     <string name="missinginfo">Zcházející informace</string>
     <string name="createExerciseFirst">Nejprve je nutno vytvořit cvičení</string>

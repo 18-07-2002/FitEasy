@@ -119,7 +119,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 case 10: // Easyfitness 0.13 BIS
                     db.execSQL("ALTER TABLE " + DAOMachine.TABLE_NAME + " ADD COLUMN " + DAOMachine.FAVORITES + " INTEGER");
                     break;
-                case 11: // FastnFitness 0.13.3 - Changed Poids from Integer to Real
+                case 11: // FitEasy 0.13.3 - Changed Poids from Integer to Real
                     // Renomme la table FONTE en table temporaire
                     db.execSQL("ALTER TABLE " + DAOFonte.TABLE_NAME + " RENAME TO tmp_table_name");
                     // Cree la nouvelle table FONTE

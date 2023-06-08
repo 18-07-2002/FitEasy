@@ -169,7 +169,7 @@
     <string name="textSlideEssential">Não há exercício predefinido. Você cria seus próprios exercícios simplesmente dependendo do nome da máquina que você tem na sua academia / local de treino.</string>
     <string name="pressBackAgain">Clique VOLTAR novamente para sair</string>
     <string name="titleSlideOpenSource">É código aberto!</string>
-    <string name="textSlideOpenSource">Junte-se à comunidade e vamos construir o melhor aplicativo fitness juntos! Visite-nos em https://github.com/brodeurlv/fastnfitness</string>
+    <string name="textSlideOpenSource">Junte-se à comunidade e vamos construir o melhor aplicativo fitness juntos! Visite-nos em https://github.com/brodeurlv/FitEasy</string>
     <string name="profileCreated">Perfil criado</string>
     <string name="missinginfo">Faltando informações</string>
     <string name="createExerciseFirst">Você deve primeiro criar um exercício</string>
