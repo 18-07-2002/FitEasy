@@ -294,7 +294,9 @@ public class ProgramRunnerFragment extends Fragment {
     public void onResume() {
         super.onResume();
         refreshData();
-    }
+        }
+
+
 
     private void refreshData() {
         // 1. Get all existing Program and Fill Spinner

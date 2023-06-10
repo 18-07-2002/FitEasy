@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="editableinput_view">
+    <declare-styleable name="editableinputview">
         <attr name="android:text" />
         <attr name="android:gravity" />
         <attr name="android:inputType" />
@@ -32,7 +32,7 @@
         <attr name="showTypeSelector" format="boolean" />
         <attr name="showRestTime" format="boolean" />
         <attr name="selectedType" format="enum">
-            <enum name="strengh" value="0" />
+            <enum name="strength" value="0" />
             <enum name="cardio" value="1" />
             <enum name="isometric" value="2" />
         </attr>
@@ -45,4 +45,7 @@
             <enum name="bar" value="1" />
         </attr>
     </declare-styleable>
+
+    <attr name="civ_background_color" format="color" />
+
 </resources>

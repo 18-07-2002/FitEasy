@@ -75,18 +75,18 @@ public class EditableInputView extends RelativeLayout implements DatePickerDialo
         if (attrs != null) {
             TypedArray a = context.getTheme().obtainStyledAttributes(
                     attrs,
-                    R.styleable.editableinput_view,
+                    R.styleable.editableinputview,
                     0, 0);
             try {
-                mTitle = a.getString(R.styleable.editableinput_view_android_title);
-                this.setText(a.getString(R.styleable.editableinput_view_android_text));
-                valueTextView.setGravity(a.getInt(R.styleable.editableinput_view_android_gravity, 0));
-                valueTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, a.getDimension(R.styleable.editableinput_view_android_textSize, 0));
-                valueTextView.setMaxLines(a.getInt(R.styleable.editableinput_view_android_maxLines, 1));
-                valueTextView.setLines(a.getInt(R.styleable.editableinput_view_android_lines, 1));
-                textViewInputType = a.getInt(R.styleable.editableinput_view_android_inputType, InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                mTitle = a.getString(R.styleable.editableinputview_android_title);
+                this.setText(a.getString(R.styleable.editableinputview_android_text));
+                valueTextView.setGravity(a.getInt(R.styleable.editableinputview_android_gravity, 0));
+                valueTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, a.getDimension(R.styleable.editableinputview_android_textSize, 0));
+                valueTextView.setMaxLines(a.getInt(R.styleable.editableinputview_android_maxLines, 1));
+                valueTextView.setLines(a.getInt(R.styleable.editableinputview_android_lines, 1));
+                textViewInputType = a.getInt(R.styleable.editableinputview_android_inputType, InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                 //valueTextView.setInputType(textViewInputType);
-                if (a.getBoolean(R.styleable.editableinput_view_iconVisible, false)) {
+                if (a.getBoolean(R.styleable.editableinputview_iconVisible, false)) {
                     editButton.setVisibility(View.VISIBLE);
                 } else {
                     editButton.setVisibility(View.GONE);

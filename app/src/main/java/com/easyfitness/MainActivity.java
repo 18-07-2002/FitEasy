@@ -1,4 +1,18 @@
 package com.easyfitness;
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Bundle;
+//import android.support.v4.app.ActivityCompat;
+//import android.support.v7.app.AppCompatActivity;
+import android.widget.TextView;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -78,6 +92,13 @@ import java.util.Locale;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class MainActivity extends AppCompatActivity {
+
+    private SensorManager sensorManager;
+    private Sensor accelerometerSensor;
+    private SensorEventListener sensorEventListener;
+
+
+    private TextView accelerometerValuesTextView;
 
     private static final int TIME_INTERVAL = 2000; // # milliseconds, desired time passed between two back presses.
 
@@ -181,6 +202,14 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        }
+        accelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
+
+
+
         SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         String dayNightAuto = SP.getString("dayNightAuto", "2");
         int dayNightAutoValue;
@@ -691,6 +720,7 @@ public class MainActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions, @NonNull int[] grantResults) {
         // If request is cancelled, the result arrays are empty.
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE_FOR_EXPORT) {
             if (grantResults.length > 0
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -1053,10 +1083,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         int index = getActivity().getSupportFragmentManager().getBackStackEntryCount() - 1;
-        if (index >= 0) { // Si on est dans une sous activité
+        if (index >= 0) {
             super.onBackPressed();
             getActivity().getSupportActionBar().show();
-        } else { // Si on est la racine, avec il faut cliquer deux fois
+        } else {
             if (mBackPressed + TIME_INTERVAL > System.currentTimeMillis()) {
                 super.onBackPressed();
                 return;
@@ -1072,9 +1102,9 @@ public class MainActivity extends AppCompatActivity {
         // Initialisation des objets DB
         mDbProfils = new DAOProfile(this.getApplicationContext());
 
-        // Pour la base de donnee profil, il faut toujours qu'il y ai au moins un profil
+
         mCurrentProfile = mDbProfils.getProfile(mCurrentProfilID);
-        if (mCurrentProfile == null) { // au cas ou il y aurait un probleme de synchro
+        if (mCurrentProfile == null) {
             try {
                 List<Profile> lList = mDbProfils.getAllProfiles(mDbProfils.getReadableDatabase());
                 mCurrentProfile = lList.get(0);
@@ -1133,4 +1163,73 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        sensorManager.unregisterListener(sensorEventListener);
+    }
+
+    @Override
+        protected void onResume() {
+            super.onResume();
+            sensorManager.registerListener(sensorEventListener, accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        }
+
+    public class YourActivity extends AppCompatActivity implements SensorEventListener {
+
+        private TextView accelerometerValuesTextView;
+
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_main);
+
+            // Initialize the TextView
+            accelerometerValuesTextView = findViewById(R.id.accelerometerValues);
+
+        }
+
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            // Get the accelerometer values
+            float x = event.values[0];
+            float y = event.values[1];
+            float z = event.values[2];
+
+            // Update your UI or perform any other actions with the values
+            accelerometerValuesTextView.setText("Accelerometer Values: " + x + ", " + y + ", " + z);
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+            // Handle accuracy changes if needed
+        }
+
+    }
+
+
+
+//    public class YourActivity extends AppCompatActivity implements SensorEventListener {
+//
+//
+//        @Override
+//        public void onSensorChanged(SensorEvent event) {
+//            // Get the accelerometer values
+//            float x = event.values[0];
+//            float y = event.values[1];
+//            float z = event.values[2];
+//
+//            // Update your UI or perform any other actions with the values
+//            accelerometerValuesTextView.setText("Accelerometer Values: " + x + ", " + y + ", " + z);
+//        }
+//
+//        @Override
+//        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+//            // Handle accuracy changes if needed
+//        }
+//        TextView accelerometerValuesTextView = findViewById(R.id.accelerometerValues);
+//// As you receive accelerometer data, update the text of accelerometerValuesTextView with the new values
+//
+//    }
+
 }
