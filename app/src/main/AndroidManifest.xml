@@ -32,6 +32,7 @@
             android:configChanges="orientation|screenSize"
             android:icon="@drawable/fiteasy"
             android:label="@string/app_name"
+
             android:windowSoftInputMode="stateUnchanged"
             android:exported="true">
             <intent-filter>

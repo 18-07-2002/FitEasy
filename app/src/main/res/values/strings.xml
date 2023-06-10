@@ -278,18 +278,18 @@
 
     <!-- Intro slides -->
     <string name="fillNameField">Please enter your name, at least</string>
-    <string name="introSlide1Title">Hello</string>
+    <string name="introSlide1Title">Hello World</string>
     <string name="size_cm_optional">Height (cm) (optional)</string>
     <string name="create">Create</string>
     <string name="birthday_optional">Birthday (optional)</string>
     <string name="name_or_pseudo">Name/pseudonym</string>
     <string name="name_is_required">Name is required</string>
     <string name="create_a_profile">Create a profile</string>
-    <string name="introSlide1Text">Welcome to FitEasy App. A quick and simple way to record your program and follow your body and exercise progression.</string>
-    <string name="introSlide2Text">Write the name of the exercise and the details, and it will be created automatically. You can find it back easily in the list.</string>
-    <string name="introSlide2Title">Quick and easy</string>
-    <string name="titleSlideEssential">Go to the essential</string>
-    <string name="textSlideEssential">No exercises are pre-created. You create your own exercises simply depending on the name of the machine you have in your fitness place/location.</string>
+    <string name="introSlide1Text">Welcome to FitEasy App. Your ultimate companion for effortless fitness tracking and seamless program management. Say goodbye to the complexities of monitoring your body and exercise progression - we\'ve got you covered!</string>
+    <string name="introSlide2Text">Enter the exercise\'s name and specifics, and it will be instantly constructed. In the list, you can quickly locate it again..</string>
+    <string name="introSlide2Title">Simple and quick</string>
+    <string name="titleSlideEssential">Visit the crucial</string>
+    <string name="textSlideEssential">There are no pre-made exercises. You design your own routines based solely on the name of the equipment you have in your gym or other fitness facility.</string>
     <string name="pressBackAgain">Click \"Back\" again to exit</string>
     <string name="titleSlideOpenSource">It is libre software! Use, change, copy, and share at will.</string>
     <string name="textSlideOpenSource">Join the community and let\'s build the best fitness app together! Visit us at https://github.com/18–07–2002/FitEasy</string>

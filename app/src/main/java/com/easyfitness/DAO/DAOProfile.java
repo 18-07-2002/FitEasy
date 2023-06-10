@@ -45,7 +45,7 @@ public class DAOProfile extends DAOBase {
      * @param m DBOProfil Profile a ajouter a la base
      */
     public void addProfile(Profile m) {
-        // Check if profil already exists
+        // Check if profile already exists
         Profile check = getProfile(m.getName());
         if (check != null) return;
 

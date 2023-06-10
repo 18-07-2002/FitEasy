@@ -50,7 +50,7 @@ public class MusicController {
 
     static final int MUSICCONTROLLER = 1563540;
     static final int MUSICCONTROLLER_PLAY_CLICK = MUSICCONTROLLER;
-    public static String PREFS_NAME = "music_prefsfile";
+    public static String PREFS_NAME = "music_prefill";
     private final UnitConverter utils = new UnitConverter();
     // Handler to update UI timer, progress bar etc,.
     private final Handler mHandler = new Handler();
@@ -136,7 +136,7 @@ public class MusicController {
                         currentIndexSongList = 0;
                         Play();
                     } else {
-                        /* release mediaplayer */
+                        /* release media-player */
                         Stop();
                     }
                 }

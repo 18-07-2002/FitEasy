@@ -8,9 +8,9 @@
         app:showAsAction="always" />
 
     <item
-        android:id="@+id/action_profil"
+        android:id="@+id/action_profile"
         android:icon="@drawable/ic_person"
-        android:title="Profil"
+        android:title="Profile"
         android:visible="false"
         app:showAsAction="always"></item>
 
