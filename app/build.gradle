@@ -83,6 +83,9 @@ dependencies {
     implementation 'androidx.preference:preference:1.2.0'
     implementation 'com.google.android.material:material:1.9.0'
 
+
+
+
     // Testing
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.mockito:mockito-core:5.3.1'
@@ -177,6 +180,9 @@ dependencies {
     implementation 'com.github.onurkagan:ktoast:1.0.3'
     implementation 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
     implementation 'com.github.ivbaranov:materialfavoritebutton:0.1.5'
+
+
+
 }
 //dependencies {
 //    implementation('com.example:library:1.0') {
