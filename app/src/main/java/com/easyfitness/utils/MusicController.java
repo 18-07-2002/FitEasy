@@ -1,8 +1,9 @@
 package com.easyfitness.utils;
 
+import static com.easyfitness.MainActivity.OPEN_MUSIC_FILE;
+
 import android.Manifest;
 import android.content.BroadcastReceiver;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -15,7 +16,6 @@ import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Environment;
 import android.os.Handler;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
@@ -33,17 +33,13 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.documentfile.provider.DocumentFile;
 
-import com.easyfitness.MainActivity;
 import com.easyfitness.R;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
-
-import static com.easyfitness.MainActivity.OPEN_MUSIC_FILE;
 
 
 public class MusicController {
@@ -160,6 +156,15 @@ public class MusicController {
         String result = null;
         if (uri.getScheme().equals("content")) {
             Cursor cursor =mActivity.getContentResolver().query(uri, null, null, null, null);
+
+
+            int columnIndex = cursor.getColumnIndex("DISPLAY_NAME");
+            ;if (columnIndex != -1) {
+                // Column exists, you can access its value
+                String columnValue = cursor.getString(columnIndex);
+                // Do something with the value
+            }
+
             try {
                 if (cursor != null && cursor.moveToFirst()) {
                     result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));

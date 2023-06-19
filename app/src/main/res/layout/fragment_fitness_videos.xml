@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    xmlns:tools="http://schemas.android.com/tools"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="match_parent"-->
+<!--    tools:context=".FitnessVideosFragment">-->
+
+<!--    &lt;!&ndash; TODO: Update blank fragment layout &ndash;&gt;-->
+<!--    <TextView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:text="@string/hello_blank_fragment" />-->
+
+
+
+<!--</FrameLayout>-->
+<!--<LinearLayout android:name="tab_weight"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="wrap_content"-->
+<!--    android:gravity="center"-->
+<!--    android:orientation="vertical"-->
+<!--    android:paddingLeft="0dp"-->
+<!--    android:paddingTop="0dp"-->
+<!--    android:paddingRight="0dp"-->
+<!--    android:paddingBottom="0dp"-->
+<!--    xmlns:android="http://schemas.android.com/apk/res/android">-->
+
+
+<!--    <androidx.recyclerview.widget.RecyclerView-->
+<!--        android:id="@+id/videosRecyclerView"-->
+<!--    ...-->
+<!--    />-->
+
+<!--</LinearLayout>-->
+
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/videosRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</LinearLayout>

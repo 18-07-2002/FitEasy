@@ -11,9 +11,9 @@ import android.widget.TextView;
 
 import androidx.cardview.widget.CardView;
 
+import com.easyfitness.R;
 import com.easyfitness.BtnClickListener;
 import com.easyfitness.DAO.bodymeasures.DAOBodyMeasure;
-import com.easyfitness.R;
 import com.easyfitness.enums.Unit;
 import com.easyfitness.utils.DateConverter;
 

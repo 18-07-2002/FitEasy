@@ -1,7 +1,5 @@
 package com.easyfitness.enums;
 
-import java.util.IllegalFormatException;
-
 public enum RecordType {
     FREE_RECORD("free_record"),
     PROGRAM_RECORD("program_record"),

@@ -7,7 +7,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.view.Gravity;

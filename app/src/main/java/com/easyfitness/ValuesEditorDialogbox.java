@@ -11,9 +11,9 @@ import android.widget.TextView;
 import androidx.core.content.res.ResourcesCompat;
 
 import com.easyfitness.enums.Unit;
-import com.easyfitness.utils.Value;
 import com.easyfitness.utils.DateConverter;
 import com.easyfitness.utils.Keyboard;
+import com.easyfitness.utils.Value;
 import com.easyfitness.views.SingleValueInputView;
 
 import java.util.Date;

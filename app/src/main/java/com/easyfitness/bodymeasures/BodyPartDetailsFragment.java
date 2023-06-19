@@ -23,6 +23,7 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.easyfitness.AppViMo;
 import com.easyfitness.BtnClickListener;
 import com.easyfitness.DAO.Profile;
 import com.easyfitness.DAO.bodymeasures.BodyMeasure;
@@ -31,7 +32,6 @@ import com.easyfitness.DAO.bodymeasures.BodyPartExtensions;
 import com.easyfitness.DAO.bodymeasures.DAOBodyMeasure;
 import com.easyfitness.DAO.bodymeasures.DAOBodyPart;
 import com.easyfitness.MainActivity;
-import com.easyfitness.AppViMo;
 import com.easyfitness.R;
 import com.easyfitness.SettingsFragment;
 import com.easyfitness.ValuesEditorDialogbox;

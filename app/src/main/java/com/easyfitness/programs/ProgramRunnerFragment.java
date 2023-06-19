@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.easyfitness.AppViMo;
 import com.easyfitness.DAO.Profile;
 import com.easyfitness.DAO.program.DAOProgram;
 import com.easyfitness.DAO.program.DAOProgramHistory;
@@ -27,7 +28,6 @@ import com.easyfitness.DAO.program.ProgramHistory;
 import com.easyfitness.DAO.record.DAORecord;
 import com.easyfitness.DAO.record.Record;
 import com.easyfitness.MainActivity;
-import com.easyfitness.AppViMo;
 import com.easyfitness.R;
 import com.easyfitness.enums.DisplayType;
 import com.easyfitness.enums.ProgramRecordStatus;

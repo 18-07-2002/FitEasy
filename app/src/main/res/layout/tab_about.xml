@@ -34,7 +34,7 @@
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="50"
-                        android:text="FitEasy" />
+                        android:text="PersonalFit-Tracker" />
 
                     <TextView
                         android:layout_width="fill_parent"

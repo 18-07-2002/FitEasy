@@ -1,27 +1,16 @@
 package com.easyfitness;
-import android.Manifest;
-import android.content.Context;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.os.Bundle;
-//import android.support.v4.app.ActivityCompat;
-//import android.support.v7.app.AppCompatActivity;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -35,6 +24,8 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.PopupMenu;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -46,6 +37,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
@@ -112,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static String FONTESPAGER = "FontePager";
     public static String WEIGHT = "Weight";
+    public static String FITNESSVIDEOS="FitnessVideos";
     public static String PROFILE = "Profile";
     public static String BODYTRACKING = "BodyTracking";
     public static String BODYTRACKINGDETAILS = "BodyTrackingDetail";
@@ -137,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
     /* Fragments */
     private FontesPagerFragment mpFontesPagerFrag = null;
     private WeightFragment mpWeightFrag = null;
+    private FitnessVideosFragment mpFitnessVideosFrag =null;
     private ProfileFragment mpProfileFrag = null;
     private MachineFragment mpMachineFrag = null;
     private SettingsFragment mpSettingFrag = null;
@@ -159,6 +153,14 @@ public class MainActivity extends AppCompatActivity {
     private boolean mMigrationToScopedStoragedone = false;
     private long mBackPressed;
     private AppViMo appViMo;
+
+
+//   private void replaceFragment(FitnessVideosFragment fragment) {
+//        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+//        transaction.replace(R.id.container, fragment);
+//        transaction.addToBackStack(null);
+//        transaction.commit();
+//    }
 
     private final PopupMenu.OnMenuItemClickListener onMenuItemClick = item -> {
         switch (item.getItemId()) {
@@ -210,6 +212,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+//        // Create an instance of YouTubeSearchExample
+//        YouTubeSearchExample youtubeSearchExample = new YouTubeSearchExample();
+//
+//        // Call the searchVideos method to perform the YouTube search
+//        youtubeSearchExample.searchVideos();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         }
@@ -257,18 +264,18 @@ public class MainActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             if (mpFontesPagerFrag == null)
                 mpFontesPagerFrag = FontesPagerFragment.newInstance(FONTESPAGER, 6);
-            if (mpWeightFrag == null) mpWeightFrag = WeightFragment.newInstance(WEIGHT, 5);
+            if (mpWeightFrag == null) mpWeightFrag = WeightFragment.newInstance(WEIGHT,5);
+            if(mpFitnessVideosFrag == null) mpFitnessVideosFrag=FitnessVideosFragment.newInstance(FITNESSVIDEOS,3);
             if (mpProfileFrag == null) mpProfileFrag = ProfileFragment.newInstance(PROFILE, 10);
             if (mpSettingFrag == null) mpSettingFrag = SettingsFragment.newInstance(SETTINGS, 8);
             if (mpAboutFrag == null) mpAboutFrag = AboutFragment.newInstance(ABOUT, 4);
             if (mpMachineFrag == null) mpMachineFrag = MachineFragment.newInstance(MACHINES, 7);
-            if (mpBodyPartListFrag == null)
-                mpBodyPartListFrag = BodyPartListFragment.newInstance(BODYTRACKING, 9);
-            if (mpWorkoutListFrag == null)
-                mpWorkoutListFrag = ProgramListFragment.newInstance(WORKOUTS, 11);
+            if (mpBodyPartListFrag == null) mpBodyPartListFrag = BodyPartListFragment.newInstance(BODYTRACKING, 9);
+            if (mpWorkoutListFrag == null) mpWorkoutListFrag = ProgramListFragment.newInstance(WORKOUTS, 11);
         } else {
             mpFontesPagerFrag = (FontesPagerFragment) getSupportFragmentManager().getFragment(savedInstanceState, FONTESPAGER);
             mpWeightFrag = (WeightFragment) getSupportFragmentManager().getFragment(savedInstanceState, WEIGHT);
+            mpFitnessVideosFrag=(FitnessVideosFragment) getSupportFragmentManager().getFragment(savedInstanceState, FITNESSVIDEOS);
             mpProfileFrag = (ProfileFragment) getSupportFragmentManager().getFragment(savedInstanceState, PROFILE);
             mpSettingFrag = (SettingsFragment) getSupportFragmentManager().getFragment(savedInstanceState, SETTINGS);
             mpAboutFrag = (AboutFragment) getSupportFragmentManager().getFragment(savedInstanceState, ABOUT);
@@ -339,6 +346,7 @@ public class MainActivity extends AppCompatActivity {
         dataList.add(new DrawerItem(this.getResources().getString(R.string.MachinesLabel), R.drawable.ic_exercises, true));
         dataList.add(new DrawerItem("Programs List", R.drawable.ic_exam, true));
         dataList.add(new DrawerItem(this.getResources().getString(R.string.weightMenuLabel), R.drawable.ic_bathroom_scale, true));
+        dataList.add(new DrawerItem("FitnessVideos", R.drawable.fe35a8e841c7e02dc813316c6ec29397,true));
         dataList.add(new DrawerItem(this.getResources().getString(R.string.bodytracking), R.drawable.ic_ruler, true));
         dataList.add(new DrawerItem(this.getResources().getString(R.string.SettingLabel), R.drawable.ic_settings, true));
         dataList.add(new DrawerItem(this.getResources().getString(R.string.AboutLabel), R.drawable.ic_info_outline, true));
@@ -456,6 +464,8 @@ public class MainActivity extends AppCompatActivity {
             getSupportFragmentManager().putFragment(outState, FONTESPAGER, mpFontesPagerFrag);
         if (getWeightFragment().isAdded())
             getSupportFragmentManager().putFragment(outState, WEIGHT, mpWeightFrag);
+        if (getFitnessVideosFragment().isAdded())
+            getSupportFragmentManager().putFragment(outState, FITNESSVIDEOS, mpFitnessVideosFrag);
         if (getProfileFragment().isAdded())
             getSupportFragmentManager().putFragment(outState, PROFILE, mpProfileFrag);
         if (getMachineFragment().isAdded())
@@ -469,6 +479,8 @@ public class MainActivity extends AppCompatActivity {
         if (getWorkoutListFragment().isAdded())
             getSupportFragmentManager().putFragment(outState, WORKOUTS, mpWorkoutListFrag);
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -555,7 +567,7 @@ public class MainActivity extends AppCompatActivity {
 
     @SuppressWarnings("deprecation")
     private void migrateDatabase() {
-        File folder = new File(Environment.getExternalStorageDirectory() + "/FitEasy");
+        File folder = new File(Environment.getExternalStorageDirectory() + "/PersonalFit-Tracker");
         if (!folder.exists()) {
             mMigrationToScopedStoragedone = true;
             savePreferences();
@@ -639,9 +651,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         // The action bar home/up action should open or close the drawer.
         // ActionBarDrawerToggle will take care of this.
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
+        if(mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
 
@@ -716,6 +729,12 @@ public class MainActivity extends AppCompatActivity {
                 ChronoDialogbox cdd = new ChronoDialogbox(MainActivity.this);
                 cdd.show();
                 return true;
+
+//            case R.id.fragment_fitness_videos:
+//            //int id = item.getItemId();
+//            replaceFragment(new FitnessVideosFragment());
+//            return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -810,6 +829,8 @@ public class MainActivity extends AppCompatActivity {
                 mDbProfils.updateProfile(temp);
                 // Make it the current.
                 setCurrentProfile(value);
+
+
             }
         });
 
@@ -868,7 +889,9 @@ public class MainActivity extends AppCompatActivity {
             ft.replace(R.id.fragment_container, getFontesPagerFragment(), FONTESPAGER);
         } else if (pFragmentName.equals(WEIGHT)) {
             ft.replace(R.id.fragment_container, getWeightFragment(), WEIGHT);
-        } else if (pFragmentName.equals(SETTINGS)) {
+        } else if (pFragmentName.equals(FITNESSVIDEOS)) {
+            ft.replace(R.id.fragment_container, getWeightFragment(), FITNESSVIDEOS);
+        }else if (pFragmentName.equals(SETTINGS)) {
             ft.replace(R.id.fragment_container, getSettingsFragment(), SETTINGS);
         } else if (pFragmentName.equals(MACHINES)) {
             ft.replace(R.id.fragment_container, getMachineFragment(), MACHINES);
@@ -973,6 +996,14 @@ public class MainActivity extends AppCompatActivity {
         if (mpWeightFrag == null) mpWeightFrag = WeightFragment.newInstance(WEIGHT, 5);
 
         return mpWeightFrag;
+    }
+
+    private FitnessVideosFragment getFitnessVideosFragment(){
+        if (mpFitnessVideosFrag == null)
+            mpFitnessVideosFrag = (FitnessVideosFragment) getSupportFragmentManager().findFragmentByTag(FITNESSVIDEOS);
+        if (mpFitnessVideosFrag == null) mpFitnessVideosFrag = FitnessVideosFragment.newInstance(FITNESSVIDEOS,12);
+
+        return mpFitnessVideosFrag;
     }
 
     private ProfileFragment getProfileFragment() {
@@ -1151,14 +1182,19 @@ public class MainActivity extends AppCompatActivity {
                     setTitle(getResources().getText(R.string.weightMenuLabel));
                     break;
                 case 5:
+                    showFragment(FITNESSVIDEOS);
+                    setTitle(getResources().getText(R.string.FitnessVideosMenuLabel));
+                    break;
+
+                case 6:
                     showFragment(BODYTRACKING);
                     setTitle(getResources().getText(R.string.bodytracking));
                     break;
-                case 6:
+                case 7:
                     showFragment(SETTINGS);
                     setTitle(getResources().getText(R.string.SettingLabel));
                     break;
-                case 7:
+                case 8:
                     showFragment(ABOUT);
                     setTitle(getResources().getText(R.string.AboutLabel));
                     break;
@@ -1187,7 +1223,7 @@ public class MainActivity extends AppCompatActivity {
         private TextView stepCountTextView;
 
         private ProgressBar stepProgressBar;
-//        private ColorBar stepColorBar;
+        //        private ColorBar stepColorBar;
         private int stepCount = 0;
         private float previousX, previousY, previousZ;
 
@@ -1283,6 +1319,7 @@ public class MainActivity extends AppCompatActivity {
 //
 //            // Update your UI or perform any other actions with the values
 //            accelerometerValuesTextView.setText("Accelerometer Values: " + x + ", " + y + ", " + z);
+
 //
 //            float currentX = event.values[0];
 //            float currentY = event.values[1];
@@ -1358,11 +1395,10 @@ public class MainActivity extends AppCompatActivity {
 
 //                // Update the Color Bar based on step count
 //                updateColorBar(stepCount);
-                    // Update the Progress Bar  based on step count
+                // Update the Progress Bar  based on step count
                 updateProgressBar(stepCount);
             }
         }
-
 
         private float calculateMagnitude(float x, float y, float z) {
             return (float) Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
@@ -1393,10 +1429,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         private void updateProgressBar(int stepCount) {
-            int maxSteps = 80; // Maximum number of steps for the ProgressBar
+            int maxSteps = 100; // Maximum number of steps for the ProgressBar
             int progress = (int) ((stepCount / (float) maxSteps) * 100);
             stepProgressBar.setProgress(progress);
-
 
 //          private void updateColorBar(int stepCount) {
 //            int maxSteps = 80; // Maximum number of steps for the ProgressBar
@@ -1406,6 +1441,54 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 }
+
+//    // Initialize the YouTube API client
+//          YouTube youtube = new YouTube.Builder(new NetHttpTransport(), new JacksonFactory(), null)
+//                .setYouTubeRequestInitializer(new YouTubeRequestInitializer("AIzaSyDzzdLOWBcI42JRdzAm5YRcwqtFtnUeo_E"))
+//              .setApplicationName("PersonalFit-Tracker")
+//                .build();
+//
+//
+//
+//    public static class YouTubeSearchExample {
+//        public static void main(String[] args) {
+//            // Define the search query and parameters
+//            String query = "fitness workout";
+//            long maxResults = 10;
+//
+//            // Create a new instance of the YouTube object
+//            YouTube youtube = new YouTube.Builder(Auth.HTTP_TRANSPORT, Auth.JSON_FACTORY, request -> {})
+//                    .setApplicationName("your-application-name")
+//                    .build();
+//
+//            // Execute the search request
+//            try {
+//                YouTube.Search.List searchList = youtube.search().list("snippet");
+//                searchList.setKey("YOUR_API_KEY");
+//                searchList.setQ(query);
+//                searchList.setMaxResults(maxResults);
+//                SearchListResponse response = searchList.execute();
+//
+//                // Process the search results
+//                List<SearchResult> searchResults = response.getItems();
+//                for (SearchResult result : searchResults) {
+//                    // Extract information from each search result (e.g., video ID, title, thumbnail)
+//                    String videoId = result.getId().getVideoId();
+//                    String title = result.getSnippet().getTitle();
+//                    String thumbnailUrl = result.getSnippet().getThumbnails().getDefault().getUrl();
+//
+//                    // Process the retrieved video information as needed
+//                    System.out.println("Video ID: " + videoId);
+//                    System.out.println("Title: " + title);
+//                    System.out.println("Thumbnail URL: " + thumbnailUrl);
+//                    System.out.println();
+//                }
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
+
 
 
     //        public boolean isStepDetected(float previousX, float previousY, float previousZ, float currentX, float currentY, float currentZ) {

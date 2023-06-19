@@ -1,5 +1,8 @@
 package com.easyfitness.utils;
 
+import static android.text.format.DateFormat.getDateFormat;
+import static android.text.format.DateFormat.getTimeFormat;
+
 import android.content.Context;
 
 import com.easyfitness.DAO.DAOUtils;
@@ -10,9 +13,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
-
-import static android.text.format.DateFormat.getDateFormat;
-import static android.text.format.DateFormat.getTimeFormat;
 
 public class DateConverter {
 

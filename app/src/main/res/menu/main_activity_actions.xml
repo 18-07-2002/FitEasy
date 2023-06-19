@@ -14,6 +14,12 @@
         android:visible="false"
         app:showAsAction="always"></item>
 
+<!--    <item-->
+<!--        android:id="@+id/fragment_fitness_videos"-->
+<!--        android:title="@string/fitness_videos"-->
+<!--        android:orderInCategory="100"-->
+<!--        app:showAsAction="never|withText" />-->
+
     <item
         android:id="@+id/action_deleteDB"
         android:title="@string/ResetAppLabel"

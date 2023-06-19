@@ -15,11 +15,11 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.easyfitness.R;
 import com.easyfitness.DAO.Profile;
 import com.easyfitness.DAO.program.DAOProgram;
 import com.easyfitness.DAO.program.Program;
 import com.easyfitness.MainActivity;
-import com.easyfitness.R;
 import com.easyfitness.utils.Keyboard;
 
 import java.util.ArrayList;

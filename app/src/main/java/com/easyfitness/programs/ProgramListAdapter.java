@@ -7,9 +7,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.easyfitness.R;
 import com.easyfitness.DAO.Profile;
 import com.easyfitness.DAO.program.Program;
-import com.easyfitness.R;
 
 import java.util.ArrayList;
 

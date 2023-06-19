@@ -1,7 +1,7 @@
 package com.easyfitness.DAO;
 
-import com.easyfitness.enums.SizeUnit;
 import com.easyfitness.enums.Gender;
+import com.easyfitness.enums.SizeUnit;
 
 import java.util.Date;
 

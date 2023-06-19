@@ -9,7 +9,6 @@ import android.media.ToneGenerator;
 import android.os.Build;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.util.Log;
 
 public class AlarmReceiver extends BroadcastReceiver {
     @Override

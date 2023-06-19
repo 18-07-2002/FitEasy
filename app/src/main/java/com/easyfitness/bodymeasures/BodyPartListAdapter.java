@@ -8,11 +8,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.easyfitness.R;
 import com.easyfitness.DAO.Profile;
 import com.easyfitness.DAO.bodymeasures.BodyMeasure;
 import com.easyfitness.DAO.bodymeasures.BodyPart;
 import com.easyfitness.DAO.bodymeasures.DAOBodyMeasure;
-import com.easyfitness.R;
 import com.easyfitness.graph.MiniDateGraph;
 import com.easyfitness.utils.DateConverter;
 import com.easyfitness.utils.ImageUtil;

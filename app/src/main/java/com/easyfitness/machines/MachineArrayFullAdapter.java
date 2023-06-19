@@ -14,7 +14,6 @@ import com.easyfitness.enums.ExerciseType;
 import com.easyfitness.utils.ImageUtil;
 import com.github.ivbaranov.mfb.MaterialFavoriteButton;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

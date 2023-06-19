@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.easyfitness.DAO.record.Record;
 import com.easyfitness.enums.ExerciseType;
 
 import java.util.ArrayList;

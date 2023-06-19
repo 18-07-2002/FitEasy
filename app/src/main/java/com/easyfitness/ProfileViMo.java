@@ -4,8 +4,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.easyfitness.DAO.Profile;
-import com.easyfitness.enums.SizeUnit;
 import com.easyfitness.enums.Unit;
 
 import java.util.Date;

@@ -1,5 +1,7 @@
 package com.easyfitness.graph;
 
+import static android.text.format.DateFormat.getDateFormat;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.widget.TextView;
@@ -16,8 +18,6 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.TimeZone;
-
-import static android.text.format.DateFormat.getDateFormat;
 
 public class DateGraphMarkerView extends MarkerView {
 

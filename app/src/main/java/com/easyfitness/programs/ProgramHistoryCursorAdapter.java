@@ -13,19 +13,14 @@ import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
 
-import com.easyfitness.DAO.DAOMachine;
-import com.easyfitness.DAO.Machine;
 import com.easyfitness.DAO.program.DAOProgram;
 import com.easyfitness.DAO.program.DAOProgramHistory;
 import com.easyfitness.DAO.program.Program;
 import com.easyfitness.DAO.record.DAORecord;
 import com.easyfitness.DAO.record.Record;
 import com.easyfitness.R;
-import com.easyfitness.enums.ExerciseType;
 import com.easyfitness.enums.ProgramRecordStatus;
 import com.easyfitness.enums.ProgramStatus;
-import com.easyfitness.utils.ImageUtil;
-import com.github.ivbaranov.mfb.MaterialFavoriteButton;
 
 import java.util.List;
 

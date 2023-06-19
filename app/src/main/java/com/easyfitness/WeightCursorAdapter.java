@@ -1,5 +1,7 @@
 package com.easyfitness;
 
+import static android.text.format.DateFormat.getDateFormat;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.view.LayoutInflater;
@@ -17,8 +19,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
-
-import static android.text.format.DateFormat.getDateFormat;
 
 public class WeightCursorAdapter extends CursorAdapter {
 

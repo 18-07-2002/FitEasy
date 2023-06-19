@@ -9,11 +9,11 @@ import com.easyfitness.DAO.Profile;
 import com.easyfitness.DAO.Weight;
 import com.easyfitness.enums.DistanceUnit;
 import com.easyfitness.enums.ExerciseType;
+import com.easyfitness.enums.ProgramRecordStatus;
 import com.easyfitness.enums.RecordType;
 import com.easyfitness.enums.WeightUnit;
 import com.easyfitness.graph.GraphData;
 import com.easyfitness.utils.DateConverter;
-import com.easyfitness.enums.ProgramRecordStatus;
 
 import java.util.ArrayList;
 import java.util.Date;

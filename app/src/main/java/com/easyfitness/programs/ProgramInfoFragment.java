@@ -13,12 +13,12 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.easyfitness.R;
 import com.easyfitness.AppViMo;
 import com.easyfitness.DAO.program.DAOProgram;
 import com.easyfitness.DAO.program.DAOProgramHistory;
 import com.easyfitness.DAO.program.Program;
 import com.easyfitness.MainActivity;
-import com.easyfitness.R;
 import com.easyfitness.views.EditableInputView;
 import com.onurkaganaldemir.ktoastlib.KToast;
 

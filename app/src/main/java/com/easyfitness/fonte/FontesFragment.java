@@ -37,6 +37,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.easyfitness.AppViMo;
 import com.easyfitness.BtnClickListener;
 import com.easyfitness.CountdownDialogbox;
 import com.easyfitness.DAO.DAOMachine;
@@ -50,7 +51,6 @@ import com.easyfitness.DAO.record.DAOStatic;
 import com.easyfitness.DAO.record.Record;
 import com.easyfitness.DatePickerDialogFragment;
 import com.easyfitness.MainActivity;
-import com.easyfitness.AppViMo;
 import com.easyfitness.R;
 import com.easyfitness.SettingsFragment;
 import com.easyfitness.TimePickerDialogFragment;

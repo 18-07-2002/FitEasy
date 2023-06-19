@@ -18,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.easyfitness.AppViMo;
 import com.easyfitness.DAO.DAOMachine;
 import com.easyfitness.DAO.Machine;
 import com.easyfitness.DAO.Profile;
@@ -25,7 +26,6 @@ import com.easyfitness.DAO.record.DAOCardio;
 import com.easyfitness.DAO.record.DAOFonte;
 import com.easyfitness.DAO.record.DAOStatic;
 import com.easyfitness.MainActivity;
-import com.easyfitness.AppViMo;
 import com.easyfitness.R;
 import com.easyfitness.SettingsFragment;
 import com.easyfitness.enums.DistanceUnit;

@@ -1,5 +1,9 @@
 package com.easyfitness.utils;
 
+import static android.provider.MediaStore.Audio;
+import static android.provider.MediaStore.Images;
+import static android.provider.MediaStore.Video;
+
 import android.annotation.SuppressLint;
 import android.content.ContentUris;
 import android.content.Context;
@@ -7,10 +11,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.DocumentsContract;
-
-import static android.provider.MediaStore.Audio;
-import static android.provider.MediaStore.Images;
-import static android.provider.MediaStore.Video;
 
 public class RealPathUtil {
 

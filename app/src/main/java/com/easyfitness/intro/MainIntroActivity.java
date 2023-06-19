@@ -48,9 +48,9 @@ public class MainIntroActivity extends IntroActivity {
         addSlide(new SimpleSlide.Builder()
                 .title(R.string.introSlide1Title)
                 .description(R.string.introSlide1Text)
-                .image(R.drawable.fiteasy)
-                .background(R.color.launcher_background)
-                .backgroundDark(R.color.launcher_background)
+                .image(R.drawable._5_06_2023_01_22_30_rec)
+                .background(R.color.black)
+                .backgroundDark(R.color.black)
                 .scrollable(true)
                 .build());
 
@@ -58,8 +58,8 @@ public class MainIntroActivity extends IntroActivity {
                 .title(R.string.introSlide2Title)
                 .description(R.string.introSlide2Text)
                 .image(R.drawable.bench_hi_res_512)
-                .background(R.color.launcher_background)
-                .backgroundDark(R.color.launcher_background)
+                .background(R.color.black)
+                .backgroundDark(R.color.black)
                 .scrollable(true)
                 .build());
 
@@ -67,8 +67,8 @@ public class MainIntroActivity extends IntroActivity {
                 .title(R.string.titleSlideEssential)
                 .description(R.string.textSlideEssential)
                 .image(R.drawable.idea_hi_res_485)
-                .background(R.color.launcher_background)
-                .backgroundDark(R.color.launcher_background)
+                .background(R.color.black)
+                .backgroundDark(R.color.black)
                 .scrollable(true)
                 .build());
 //
@@ -107,8 +107,8 @@ public class MainIntroActivity extends IntroActivity {
         if (mDbProfils.getCount() == 0) {
             // Ouvre la fenetre de creation de profil
             final Slide profileSlide = new FragmentSlide.Builder()
-                    .background(R.color.launcher_background)
-                    .backgroundDark(R.color.launcher_background)
+                    .background(R.color.black)
+                    .backgroundDark(R.color.black)
                     .fragment(NewProfileFragment.newInstance())
                     .build();
             addSlide(profileSlide);

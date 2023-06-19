@@ -17,7 +17,6 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
 import android.widget.ImageView;
-import android.widget.ImageView.ScaleType;
 import android.widget.ListView;
 
 import androidx.core.app.ActivityCompat;
@@ -25,18 +24,15 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
-import com.easyfitness.BuildConfig;
 import com.easyfitness.R;
+import com.onurkaganaldemir.ktoastlib.BuildConfig;
 import com.onurkaganaldemir.ktoastlib.KToast;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.channels.FileChannel;
-import java.nio.channels.WritableByteChannel;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
