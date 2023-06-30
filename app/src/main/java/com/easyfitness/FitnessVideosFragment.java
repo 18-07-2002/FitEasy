@@ -12,12 +12,24 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.services.youtube.YouTube;
-import com.google.api.services.youtube.YouTubeRequestInitializer;
-import com.google.api.services.youtube.model.SearchListResponse;
-import com.google.api.services.youtube.model.SearchResult;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,6 +72,8 @@ public class FitnessVideosFragment extends Fragment implements VideoAdapter.OnCl
     private RecyclerView videosRecyclerView;
     private VideoAdapter videoAdapter;
 
+    private ArrayList<YTModel> videosList = new ArrayList<>();
+
     @Override
     public void onItemClick(VideoItem videoItem) {
         // Handle the click event for the video item here
@@ -75,7 +89,7 @@ public class FitnessVideosFragment extends Fragment implements VideoAdapter.OnCl
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         videoList = new ArrayList<>();
-        videoAdapter = new VideoAdapter(videoList, this);
+        videoAdapter = new VideoAdapter(videoList, this, getActivity());
     }
 
     @Override
@@ -88,8 +102,63 @@ public class FitnessVideosFragment extends Fragment implements VideoAdapter.OnCl
         videosRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         videosRecyclerView.setAdapter(videoAdapter);
 
+
+        RequestQueue queue = Volley.newRequestQueue(getActivity());
+        String url ="https://www.googleapis.com/youtube/v3/search?part=snippet&q=fitness&type=video&key=AIzaSyDzzdLOWBcI42JRdzAm5YRcwqtFtnUeo_E&max_results=20";
+        JsonObjectRequest request = new JsonObjectRequest(url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        videosList.clear();
+
+                                        List<VideoItem> videoItems = new ArrayList<>();
+
+
+                        if (null != response) {
+                            try {
+                                System.out.println(response.getJSONArray("items"));
+                                JSONArray videos = response.getJSONArray("items");
+                                for(int i = 0; i < videos.length(); i++){
+                                    JSONObject videoJSON = videos.getJSONObject(i);
+                                    YTModel video = new YTModel();
+                                    video.setId(videoJSON.getJSONObject("id").getString("videoId"));
+                                    video.setTitle(videoJSON.getJSONObject("snippet").getString("title"));
+                                    video.setDescription(videoJSON.getJSONObject("snippet").getString("description"));
+                                    video.setThumbnail(videoJSON.getJSONObject("snippet").getJSONObject("thumbnails").getJSONObject("default").getString("url"));
+                                    videosList.add(video);
+                                    // Create a new VideoItem object with the extracted information
+                                    VideoItem videoItem = new VideoItem(video.getId(), video.getTitle(), video.getThumbnail(), video.getDescription());
+                                    videoList.clear();
+                                    videoList.addAll(videoItems);
+                                    // Notify the adapter of the data changes
+                                    videoAdapter.notifyDataSetChanged();
+                                    // Add the VideoItem to the videoItems list
+                                    videoItems.add(videoItem);
+
+                                }
+                                System.out.println(videosList);
+                                //handle your response
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        queue.add(request);
+
         // Perform the YouTube search and populate the video list
-        new YouTubeSearchTask().execute();
+//        new YouTubeSearchTask().execute();
+
+
+        // Execute the search request
+
+
 
         return view;
     }
@@ -98,43 +167,85 @@ public class FitnessVideosFragment extends Fragment implements VideoAdapter.OnCl
 
         @Override
         protected List<VideoItem> doInBackground(Void... params) {
-            // Define the search query and parameters
+
+
             String query = "fitness workout";
             long maxResults = 10;
 
-            // Initialize the YouTube API client
-            YouTube youtube = new YouTube.Builder(new NetHttpTransport(), new JacksonFactory(), null)
-                    .setYouTubeRequestInitializer(new YouTubeRequestInitializer("AIzaSyDzzdLOWBcI42JRdzAm5YRcwqtFtnUeo_E"))
-                    .setApplicationName("PersonalFit-Tracker")
-                    .build();
-
-            // Execute the search request
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpResponse response;
+            String responseString = null;
             try {
-                YouTube.Search.List searchList = youtube.search().list("snippet");
-                searchList.setQ(query);
-                searchList.setMaxResults(maxResults);
-                SearchListResponse response = searchList.execute();
+                response = httpclient.execute(new HttpGet("https://www.googleapis.com/youtube/v3/search?part=snippet&q=eminem&type=video&key=AIzaSyDzzdLOWBcI42JRdzAm5YRcwqtFtnUeo_E&max_results=20"));
+                StatusLine statusLine = response.getStatusLine();
+                if(statusLine.getStatusCode() == HttpStatus.SC_OK){
+                    ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    response.getEntity().writeTo(out);
+                    responseString = out.toString();
+                    System.out.println(responseString);
+                    out.close();
+                } else{
+                    //Closes the connection.
+                    response.getEntity().getContent().close();
+                    throw new IOException(statusLine.getReasonPhrase());
+                }
+            } catch (ClientProtocolException e) {
+                //TODO Handle problems..
+            } catch (IOException e) {
+                //TODO Handle problems..
+            }
+
+//        // Initialize the YouTube API client
+//        YouTube youtube = new YouTube.Builder(new NetHttpTransport(), new JacksonFactory(), null)
+//                .setYouTubeRequestInitializer(new YouTubeRequestInitializer("AIzaSyDzzdLOWBcI42JRdzAm5YRcwqtFtnUeo_E"))
+//                .setApplicationName("PersovideoList.addAll(videoItems);
+//                // Notify the adapter of the data changes
+//                videoAdapter.notifyDataSetChanged();nalFit-Tracker")
+//                .build();
+
+
+//            if (query.length()<1) query="Youtube"; // Default search word is 'Youtube'.
+//            try {
+//                YouTube youTube = new YouTube.Builder(new NetHttpTransport(), new JacksonFactory(), new HttpRequestInitializer() {
+//                    @Override
+//                    public void initialize(HttpRequest httpRequest) throws IOException {
+//                    }
+//                }).setApplicationName(getString(R.string.app_name)).build();
+//                YouTube.Search.List search = youTube.search().list("id,snippet");
+//
+//
+//                search.setKey("AIzaSyDzzdLOWBcI42JRdzAm5YRcwqtFtnUeo_E");
+//                search.setQ(query); //What to search for.
+//                search.setType("video");
+//                search.setFields("items(id/kind,id/videoId,snippet/title,snippet/thumbnails/default/url)");
+//                search.setMaxResults(maxResults);
+//
+//                SearchListResponse searchListResponse = search.execute();
+//                List<SearchResult> searchResultList = searchListResponse.getItems();
+//
+//                System.out.println("Search result : "+searchResultList);
+//            displayThumbnails(searchResultList.iterator(),query);
+
+                // if(searchResultList!=null){
+
+                //          }
+
 
                 // Process the search results
-                List<SearchResult> searchResults = response.getItems();
-                List<VideoItem> videoItems = new ArrayList<>();
-                for (SearchResult result : searchResults) {
-                    // Extract information from each search result (e.g., video ID, title, thumbnail)
-                    String videoId = result.getId().getVideoId();
-                    String title = result.getSnippet().getTitle();
-                    String thumbnailUrl = result.getSnippet().getThumbnails().getDefault().getUrl();
-                    String details = result.getSnippet().getDescription(); // Extract the video details
-
-                    // Create a new VideoItem object with the extracted information
-                    VideoItem videoItem = new VideoItem(videoId, title, thumbnailUrl, details);
-
-                    // Add the VideoItem to the videoItems list
-                    videoItems.add(videoItem);
-                }
-                return videoItems;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+//                List<SearchResult> searchResults = response.getItems();
+//                System.out.println("test  "+searchResults);
+//                for (SearchResult result : searchResults) {
+//                    // Extract information from each search result (e.g., video ID, title, thumbnail)
+//                    String videoId = result.getId().getVideoId();
+//                    String title = result.getSnippet().getTitle();
+//                    String thumbnailUrl = result.getSnippet().getThumbnails().getDefault().getUrl();
+//                    String details = result.getSnippet().getDescription(); // Extract the video details
+//
+//                }
+//                return videoItems;
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
             return null;
         }
 

@@ -3,14 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
 
     <!-- The main content view -->
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/background"
+        android:background="@color/record_background_even"
         android:focusableInTouchMode="true"
         android:orientation="vertical"
         android:paddingLeft="0dp"
@@ -22,7 +23,7 @@
             android:id="@+id/actionToolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/dialog_title_color"
+            android:background="#2196F3"
             android:elevation="4dp"
             android:minHeight="?attr/actionBarSize"
             android:visibility="visible">
@@ -30,8 +31,8 @@
 
             <com.mikhaellopez.circularimageview.CircularImageView
                 android:id="@+id/imageProfile"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
                 android:layout_gravity="end"
@@ -39,7 +40,7 @@
                 app:civ_border_color="#EEEEEE"
                 app:civ_border_width="0dp"
                 app:civ_shadow="false"
-                app:civ_shadow_color="#8BC34A"
+                app:civ_shadow_color="@color/black"
                 app:civ_shadow_radius="0dp" />
         </androidx.appcompat.widget.Toolbar>
 
@@ -49,7 +50,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_margin="0dp"
-            android:background="@color/dark_icon_background"
+            android:background="@color/black"
             android:elevation="4dp"
             android:minHeight="?attr/actionBarSize"
             android:padding="0dp"
@@ -94,7 +95,7 @@
                             android:marqueeRepeatLimit="marquee_forever"
                             android:scrollHorizontally="true"
                             android:singleLine="true"
-                            tools:text="musique_test.mp3" />
+                            tools:text="music_test.mp3" />
 
                     </LinearLayout>
 
@@ -219,19 +220,96 @@
             android:layout_height="match_parent"
             android:layout_above="@id/musicToolbar"
             android:layout_below="@id/actionToolbar"
-            android:orientation="vertical"
-            android:background="@color/disabled_color">
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/stepCountTextView"
+                android:layout_width="408dp"
+                android:layout_height="35dp"
+                android:layout_gravity="center"
+                android:layout_margin="@dimen/buttons_stroke_width"
+                android:layout_marginHorizontal="@dimen/alert_width"
+                android:layout_marginBottom="@dimen/alert_width"
+                android:background="@color/record_background_even"
+                android:gravity="center"
+                android:text="  *STEPS : "
+                android:textColor="@color/enabled_color"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
 
             <TextView
                 android:id="@+id/accelerometerValues"
-                android:layout_width="wrap_content"
+                android:layout_width="409dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:text="Accelerometer Values : "
-                android:textStyle="bold"
-                android:textFontWeight="@integer/autoui_mode_value"
-                android:background="@color/dark_icon_background"/>
+                android:layout_gravity="center"
+                android:layout_margin="@dimen/buttons_stroke_width"
+                android:layout_marginHorizontal="@dimen/alert_width"
+                android:layout_marginTop="@dimen/alert_width"
+                android:layout_marginBottom="@dimen/alert_width"
+                android:background="@color/record_background_even"
+                android:gravity="center_vertical"
+                android:text="         Accelerometer Values: -0.1759738177061081 0.5907692909240723 9.761159896850586"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/accelerometerValues"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/magnitudeTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@color/record_background_even"
+                    android:padding="10dp"
+                    android:textSize="17sp"
+                    android:text="Magnitude:"
+                    android:textStyle="bold"/>
+
+                <ProgressBar
+                    android:id="@+id/stepProgressBar"
+                    android:layout_width="fill_parent"
+                    android:layout_height="30dp"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                    android:progress="0"
+                    android:max="100" /><!--set 100 maximum value for the progress bar-->
+            </LinearLayout>
+
+            <!--            <TextView-->
+            <!--                android:id="@+id/magnitudeTextView"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_below="@id/accelerometerValues"-->
+            <!--                android:background="#FF9800"-->
+            <!--                android:padding="10dp"-->
+            <!--                android:textColor="@android:color/black"-->
+            <!--                android:textSize="15sp"-->
+            <!--                tools:text="Magnitude: 0.0" />-->
+
+
+            <!--            <ProgressBar-->
+            <!--                android:id="@+id/stepProgressBar"-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="35dp"-->
+            <!--                android:layout_gravity="right"-->
+
+            <!--                android:max="100"-->
+            <!--                android:progress="0" />-->
+
+            <!--            -->
+            <!--            <com.example.1.0.0.ColorBar-->
+            <!--                android:id="@+id/stepColorBar"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="20dp"-->
+            <!--                app:maxValue="100"-->
+            <!--                app:currentValue="0" />-->
+
         </LinearLayout>
+
 
 
 
@@ -249,7 +327,7 @@
         android:layout_width="240dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="#111"
+        android:background="#37474F"
         android:choiceMode="none"
         android:divider="@android:color/transparent"
         android:dividerHeight="0dp" />

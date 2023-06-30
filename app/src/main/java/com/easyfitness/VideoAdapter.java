@@ -2,6 +2,7 @@ package com.easyfitness;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,10 +19,12 @@ import java.util.List;
 public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.ViewHolder> {
     private List<VideoItem> videoList;
     private OnClickListener clickListener;
+    private Context c;
 
-    public VideoAdapter(List<VideoItem> videoList, OnClickListener clickListener) {
+    public VideoAdapter(List<VideoItem> videoList, OnClickListener clickListener, Context c) {
         this.videoList = videoList;
         this.clickListener = clickListener;
+        this.c = c;
     }
 
     public interface OnClickListener {
@@ -55,6 +58,10 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         VideoItem videoItem = videoList.get(position);
+        System.out.println("Video title : "+videoItem.getTitle());
+        System.out.println("Video desc : "+videoItem.getDetails());
+        System.out.println("Video thumb : "+videoItem.getThumbnailUrl());
+        System.out.println("Video id : "+videoItem.getVideoId());
 
         // Set the video data to the UI elements
         holder.titleTextView.setText(videoItem.getTitle());
@@ -70,16 +77,16 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.ViewHolder> 
             @Override
             public void onClick(View v) {
                 // Handle item click event (e.g., open video details or start playback)
-                int position = holder.getAdapterPosition();
-                if (position != RecyclerView.NO_POSITION && clickListener != null) {
-                    clickListener.onItemClick(videoList.get(position));
-                }
+                Intent i = new Intent(c,FullScreeenYoutubePlayer.class);
+                i.putExtra("id",videoItem.getVideoId());
+                c.startActivity(i);
             }
         });
     }
 
     @Override
     public int getItemCount() {
+        System.out.println("VIdeo list size : "+videoList.size());
         return videoList.size();
     }
 }

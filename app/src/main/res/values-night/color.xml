@@ -13,7 +13,7 @@
     <color name="add_button_background">#7C7C7C</color>
     <color name="dark_icon_background">#C0C0C0</color>
     <color name="drawer_icon">#C0C0C0</color>
-    <color name="icon_enable">#0DD815</color>
+    <color name="icon_enable">#2196F3</color>
     <color name="icon_disable">#818181</color>
     <color name="dialog_title_color">#5DBCD2</color>
     <color name="daily_calorie_spinner_selected">#C7C7C7</color>

@@ -2,7 +2,6 @@ package com.easyfitness;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -12,9 +11,11 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -37,7 +38,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
@@ -77,6 +77,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -85,32 +86,39 @@ import java.util.Locale;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SensorEventListener{
+    DecimalFormat decimalFormat;
 
+    private Accelerometer accelerometer;
+    private static final int TIME_INTERVAL = 2000; // # milliseconds, desired time passed between two back presses.
     private SensorManager sensorManager;
+    double ax,ay,az;   // these are the acceleration in x,y and z axis
+    private float previousX = 0.0f;
+    private float previousY = 0.0f;
+    private float previousZ = 0.0f;
+
     private Sensor accelerometerSensor;
-    private SensorEventListener sensorEventListener;
-
-
+    //private SensorEventListener sensorEventListener;
     private TextView accelerometerValuesTextView;
     private TextView stepCountTextView;
-
-
     private int stepCount = 0;
-    private float previousY = 0.0f;
 
+    private ProgressBar stepProgressBar;
 
-    private static final int TIME_INTERVAL = 2000; // # milliseconds, desired time passed between two back presses.
+    private float gamma = 0.8f; // Filter smoothing factor
+    private float[] gravity = new float[3]; // Gravity values
+    private float[] linearAcceleration = new float[3]; // Linear acceleration values
 
     public static String FONTESPAGER = "FontePager";
     public static String WEIGHT = "Weight";
-    public static String FITNESSVIDEOS="FitnessVideos";
+    public static String FITNESSVIDEOS = "FitnessVideos";
     public static String PROFILE = "Profile";
     public static String BODYTRACKING = "BodyTracking";
     public static String BODYTRACKINGDETAILS = "BodyTrackingDetail";
     public static String ABOUT = "About";
     public static String SETTINGS = "Settings";
     public static String MACHINES = "Machines";
+    private TextView accValueView;
     public static String MACHINESDETAILS = "MachinesDetails";
     public static String WORKOUTS = "Workouts";
     public static String WORKOUTPAGER = "WorkoutPager";
@@ -130,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
     /* Fragments */
     private FontesPagerFragment mpFontesPagerFrag = null;
     private WeightFragment mpWeightFrag = null;
-    private FitnessVideosFragment mpFitnessVideosFrag =null;
+    private FitnessVideosFragment mpFitnessVideosFrag = null;
     private ProfileFragment mpProfileFrag = null;
     private MachineFragment mpMachineFrag = null;
     private SettingsFragment mpSettingFrag = null;
@@ -161,6 +169,9 @@ public class MainActivity extends AppCompatActivity {
 //        transaction.addToBackStack(null);
 //        transaction.commit();
 //    }
+
+
+
 
     private final PopupMenu.OnMenuItemClickListener onMenuItemClick = item -> {
         switch (item.getItemId()) {
@@ -211,17 +222,31 @@ public class MainActivity extends AppCompatActivity {
     };
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+   protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        accelerometer = new Accelerometer();
+        sensorManager=(SensorManager) getSystemService(SENSOR_SERVICE);
+        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION), SensorManager.SENSOR_DELAY_NORMAL);
+        decimalFormat = new DecimalFormat("0.00");
+        stepCountTextView = findViewById(R.id.stepCountTextView);
+//            stepColorBar = findViewById(R.id.stepColorBar);
+
+        stepProgressBar = findViewById(R.id.stepProgressBar);
+        accValueView = findViewById(R.id.accelerometerValues);
+//        accelerometer.initializeAccelerometer();
+//        accelerometer.onCreate();
+
 //        // Create an instance of YouTubeSearchExample
 //        YouTubeSearchExample youtubeSearchExample = new YouTubeSearchExample();
 //
 //        // Call the searchVideos method to perform the YouTube search
 //        youtubeSearchExample.searchVideos();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
+            Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
+            finish();
         }
-        accelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-
 
         SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         String dayNightAuto = SP.getString("dayNightAuto", "2");
@@ -251,9 +276,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.activity_main);
 
         loadPreferences();
 
@@ -264,18 +286,21 @@ public class MainActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             if (mpFontesPagerFrag == null)
                 mpFontesPagerFrag = FontesPagerFragment.newInstance(FONTESPAGER, 6);
-            if (mpWeightFrag == null) mpWeightFrag = WeightFragment.newInstance(WEIGHT,5);
-            if(mpFitnessVideosFrag == null) mpFitnessVideosFrag=FitnessVideosFragment.newInstance(FITNESSVIDEOS,3);
+            if (mpWeightFrag == null) mpWeightFrag = WeightFragment.newInstance(WEIGHT, 5);
+            if (mpFitnessVideosFrag == null)
+                mpFitnessVideosFrag = FitnessVideosFragment.newInstance(FITNESSVIDEOS, 12);
             if (mpProfileFrag == null) mpProfileFrag = ProfileFragment.newInstance(PROFILE, 10);
             if (mpSettingFrag == null) mpSettingFrag = SettingsFragment.newInstance(SETTINGS, 8);
             if (mpAboutFrag == null) mpAboutFrag = AboutFragment.newInstance(ABOUT, 4);
             if (mpMachineFrag == null) mpMachineFrag = MachineFragment.newInstance(MACHINES, 7);
-            if (mpBodyPartListFrag == null) mpBodyPartListFrag = BodyPartListFragment.newInstance(BODYTRACKING, 9);
-            if (mpWorkoutListFrag == null) mpWorkoutListFrag = ProgramListFragment.newInstance(WORKOUTS, 11);
+            if (mpBodyPartListFrag == null)
+                mpBodyPartListFrag = BodyPartListFragment.newInstance(BODYTRACKING, 9);
+            if (mpWorkoutListFrag == null)
+                mpWorkoutListFrag = ProgramListFragment.newInstance(WORKOUTS, 11);
         } else {
             mpFontesPagerFrag = (FontesPagerFragment) getSupportFragmentManager().getFragment(savedInstanceState, FONTESPAGER);
             mpWeightFrag = (WeightFragment) getSupportFragmentManager().getFragment(savedInstanceState, WEIGHT);
-            mpFitnessVideosFrag=(FitnessVideosFragment) getSupportFragmentManager().getFragment(savedInstanceState, FITNESSVIDEOS);
+            mpFitnessVideosFrag = (FitnessVideosFragment) getSupportFragmentManager().getFragment(savedInstanceState, FITNESSVIDEOS);
             mpProfileFrag = (ProfileFragment) getSupportFragmentManager().getFragment(savedInstanceState, PROFILE);
             mpSettingFrag = (SettingsFragment) getSupportFragmentManager().getFragment(savedInstanceState, SETTINGS);
             mpAboutFrag = (AboutFragment) getSupportFragmentManager().getFragment(savedInstanceState, ABOUT);
@@ -346,7 +371,7 @@ public class MainActivity extends AppCompatActivity {
         dataList.add(new DrawerItem(this.getResources().getString(R.string.MachinesLabel), R.drawable.ic_exercises, true));
         dataList.add(new DrawerItem("Programs List", R.drawable.ic_exam, true));
         dataList.add(new DrawerItem(this.getResources().getString(R.string.weightMenuLabel), R.drawable.ic_bathroom_scale, true));
-        dataList.add(new DrawerItem("FitnessVideos", R.drawable.fe35a8e841c7e02dc813316c6ec29397,true));
+        dataList.add(new DrawerItem("FitnessVideos", R.drawable.fe35a8e841c7e02dc813316c6ec29397, true));
         dataList.add(new DrawerItem(this.getResources().getString(R.string.bodytracking), R.drawable.ic_ruler, true));
         dataList.add(new DrawerItem(this.getResources().getString(R.string.SettingLabel), R.drawable.ic_settings, true));
         dataList.add(new DrawerItem(this.getResources().getString(R.string.AboutLabel), R.drawable.ic_info_outline, true));
@@ -381,6 +406,17 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        accelerometer.onResume();
+//    }
+//
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        accelerometer.onPause();
+//    }
 
     @Override
     protected void onStart() {
@@ -479,7 +515,6 @@ public class MainActivity extends AppCompatActivity {
         if (getWorkoutListFragment().isAdded())
             getSupportFragmentManager().putFragment(outState, WORKOUTS, mpWorkoutListFrag);
     }
-
 
 
     @Override
@@ -654,7 +689,7 @@ public class MainActivity extends AppCompatActivity {
 
         // The action bar home/up action should open or close the drawer.
         // ActionBarDrawerToggle will take care of this.
-        if(mDrawerToggle.onOptionsItemSelected(item)) {
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
 
@@ -667,13 +702,13 @@ public class MainActivity extends AppCompatActivity {
                 importDatabase();
                 return true;
             case R.id.action_deleteDB:
-                // Afficher une boite de dialogue pour confirmer
+
                 AlertDialog.Builder deleteDbBuilder = new AlertDialog.Builder(this);
 
                 deleteDbBuilder.setTitle(getActivity().getResources().getText(R.string.global_confirm));
                 deleteDbBuilder.setMessage(getActivity().getResources().getText(R.string.deleteDB_warning));
 
-                // Si oui, supprimer la base de donnee et refaire un Start.
+
                 deleteDbBuilder.setPositiveButton(getActivity().getResources().getText(R.string.global_yes), (dialog, which) -> {
                     List<Profile> lList = mDbProfils.getAllProfiles(mDbProfils.getReadableDatabase());
                     for (int i = 0; i < lList.size(); i++) {
@@ -890,8 +925,8 @@ public class MainActivity extends AppCompatActivity {
         } else if (pFragmentName.equals(WEIGHT)) {
             ft.replace(R.id.fragment_container, getWeightFragment(), WEIGHT);
         } else if (pFragmentName.equals(FITNESSVIDEOS)) {
-            ft.replace(R.id.fragment_container, getWeightFragment(), FITNESSVIDEOS);
-        }else if (pFragmentName.equals(SETTINGS)) {
+            ft.replace(R.id.fragment_container, getFitnessVideosFragment(), FITNESSVIDEOS);
+        } else if (pFragmentName.equals(SETTINGS)) {
             ft.replace(R.id.fragment_container, getSettingsFragment(), SETTINGS);
         } else if (pFragmentName.equals(MACHINES)) {
             ft.replace(R.id.fragment_container, getMachineFragment(), MACHINES);
@@ -998,10 +1033,11 @@ public class MainActivity extends AppCompatActivity {
         return mpWeightFrag;
     }
 
-    private FitnessVideosFragment getFitnessVideosFragment(){
+    private FitnessVideosFragment getFitnessVideosFragment() {
         if (mpFitnessVideosFrag == null)
             mpFitnessVideosFrag = (FitnessVideosFragment) getSupportFragmentManager().findFragmentByTag(FITNESSVIDEOS);
-        if (mpFitnessVideosFrag == null) mpFitnessVideosFrag = FitnessVideosFragment.newInstance(FITNESSVIDEOS,12);
+        if (mpFitnessVideosFrag == null)
+            mpFitnessVideosFrag = FitnessVideosFragment.newInstance(FITNESSVIDEOS, 12);
 
         return mpFitnessVideosFrag;
     }
@@ -1153,6 +1189,208 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+
+        // Get accelerometer values
+//        float x = event.values[0];
+//        float y = event.values[1];
+//        float z = event.values[2];
+//
+//        // Apply a high-pass filter to remove low-frequency components
+//        float filteredX = gamma * previousX + (1 - gamma) * x;
+//        float filteredY = gamma * previousY + (1 - gamma) * y;
+//        float filteredZ = gamma * previousZ + (1 - gamma) * z;
+//
+//        // Apply a high-pass filter to remove gravity
+//        gravity[0] = gamma * gravity[0] + (1 - gamma) * x;
+//        gravity[1] = gamma * gravity[1] + (1 - gamma) * y;
+//        gravity[2] = gamma * gravity[2] + (1 - gamma) * z;
+//
+//        // Calculate linear acceleration by subtracting gravity and low-frequency components
+//        linearAcceleration[0] = x - gravity[0] - filteredX;
+//        linearAcceleration[1] = y - gravity[1] - filteredY;
+//        linearAcceleration[2] = z - gravity[2] - filteredZ;
+//
+//        // Apply noise reduction techniques (averaging)
+//        int numSamples = 5; // Number of samples to average
+//        float sumX = 0, sumY = 0, sumZ = 0;
+//
+//        for (int i = 0; i < numSamples; i++) {
+//            sumX += linearAcceleration[0];
+//            sumY += linearAcceleration[1];
+//            sumZ += linearAcceleration[2];
+//        }
+//
+//        // Calculate the average values
+//        float averageX = sumX / numSamples;
+//        float averageY = sumY / numSamples;
+//        float averageZ = sumZ / numSamples;
+//
+//
+//        // Update your UI or perform any other actions with the values
+//        if(event.sensor.getType()==Sensor.TYPE_ACCELEROMETER){
+//            accValueView.setText("        X: " + averageX + ", Y:" + averageY + ", Z:" + averageZ);}
+//        System.out.println("Sensor changed.");
+        if (event.sensor.getType()==Sensor.TYPE_LINEAR_ACCELERATION){
+            ax=event.values[0];
+            ay=event.values[1];
+            az=event.values[2];
+
+            // Apply noise reduction techniques (averaging)
+            int numSamples = 5; // Number of samples to average
+            float sumX = 0, sumY = 0, sumZ = 0;
+
+            for (int i = 0; i < numSamples; i++) {
+                sumX += ax;
+                sumY += ay;
+                sumZ += az;
+            }
+
+            // Calculate the average values
+            float averageX = sumX / numSamples;
+            float averageY = sumY / numSamples;
+            float averageZ = sumZ / numSamples;
+//            System.out.println("Sensor values : "+ax+ay+az);
+            accValueView.setText("        Accelerometer values : "+decimalFormat.format(averageX)+" "+decimalFormat.format(averageY)+" "+decimalFormat.format(averageZ));
+
+
+            // Use the averaged values for further processing or step detection
+            float currentX = averageX;
+            float currentY = averageY;
+            float currentZ = averageZ;
+
+//            System.out.println("Step detected : "+isStepDetected(previousX, previousY, previousZ, currentX, currentY, currentZ));
+            // Check for a step by detecting peaks in the accelerometer readings
+            handleStepDetection(previousX, previousY, previousZ, currentX, currentY, currentZ);
+            if (isStepDetected(previousX, previousY, previousZ, currentX, currentY, currentZ)) {
+                stepCount++;
+                System.out.println(stepCount);
+
+                // Update UI or perform any necessary actions for a detected step
+                updateStepCount(stepCount);
+//                // Update the ColorBar based on step count
+//                updateColorBar(stepCount);
+                // Update the Progress Bar based on step count
+                updateProgressBar(stepCount);
+
+
+            }
+
+            previousX = currentX;
+            previousY = currentY;
+            previousZ = currentZ;
+
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+    }
+
+    public boolean isStepDetected(float previousX, float previousY, float previousZ, float currentX, float currentY, float currentZ) {
+        // Adjust these thresholds based on the characteristics of your accelerometer data
+        float stepThreshold = 2.0f; // Minimum difference in acceleration values for a step to be detected
+
+        // Check if the acceleration has crossed the threshold in the positive direction
+        if (previousY < stepThreshold && currentY >= stepThreshold) {
+            return true;
+        }
+
+        // Check if the acceleration has crossed the threshold in the negative direction
+        if (previousY > -stepThreshold && currentY <= -stepThreshold) {
+            return true;
+        }
+
+        if (previousX < stepThreshold && currentX >= stepThreshold) {
+            return true;
+        }
+
+        // Check if the acceleration has crossed the threshold in the negative direction
+        if (previousX > -stepThreshold && currentX <= -stepThreshold) {
+            return true;
+        }
+
+        if (previousZ < stepThreshold && currentZ >= stepThreshold) {
+            return true;
+        }
+
+        // Check if the acceleration has crossed the threshold in the negative direction
+        if (previousZ > -stepThreshold && currentZ <= -stepThreshold) {
+            return true;
+        }
+
+        // No step detected
+        return false;
+    }
+
+    // Call this method when you detect a step
+    public void handleStepDetection(float previousX, float previousY, float previousZ, float currentX, float currentY, float currentZ) {
+        if (isStepDetected(previousX, previousY, previousZ, currentX, currentY, currentZ)) {
+            stepCount++;
+
+            // Calculate magnitude of acceleration
+            float magnitude = calculateMagnitude(currentX, currentY, currentZ);
+
+            // Update UI or perform any necessary actions with the magnitude value
+            updateMagnitude(magnitude);
+
+            // Update UI or perform any necessary actions for a detected step
+            updateStepCount(stepCount);
+
+//                // Update the Color Bar based on step count
+//                updateColorBar(stepCount);
+            // Update the Progress Bar  based on step count
+            updateProgressBar(stepCount);
+        }
+    }
+
+    private float calculateMagnitude(float x, float y, float z) {
+        return (float) Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
+    }
+
+
+    private void updateStepCount(int count) {
+        stepCountTextView.setText(String.valueOf(count));
+    }
+
+    private void updateMagnitude(float magnitude) {
+        // Perform any necessary actions with the magnitude value
+        // For example, update UI elements, display a toast, or send the value to the game
+
+        // Update UI element
+        TextView magnitudeTextView = findViewById(R.id.magnitudeTextView);
+        magnitudeTextView.setText("Magnitude : "+ magnitude );
+
+        // Display a toast message
+//        Toast.makeText(this, "Magnitude: " + magnitude, Toast.LENGTH_SHORT).show();
+
+        // Send the magnitude value to the game via Bluetooth or any other communication method
+        //sendMagnitudeToGame(magnitude);
+    }
+
+    private int normalizeValue(float value, float min, float max) {
+        return (int) ((value - min) / (max - min) * 255);
+    }
+
+    private void updateProgressBar(int stepCount) {
+        int maxSteps = 500; // Maximum number of steps for the ProgressBar
+        final int[] progress = {(int) ((stepCount / (float) maxSteps) * 100)};
+        System.out.println("Progress : "+ progress[0]);
+        //progressBar.setVisibility(View.VISIBLE);
+         Handler mHandler = new Handler();
+         stepProgressBar.setMax(100);
+         stepProgressBar.setProgress(progress[0]);
+
+
+//          private void updateColorBar(int stepCount) {
+//            int maxSteps = 80; // Maximum number of steps for the ProgressBar
+//           int Color = (int) ((stepCount / (float) maxSteps) * 100);
+//           stepColorBar.setColor(Color);
+
+    }
+
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView parent, View view, int position, long id) {
@@ -1204,669 +1442,4 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        sensorManager.unregisterListener(sensorEventListener);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        sensorManager.registerListener(sensorEventListener, accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
-    }
-
-    public class YourActivity extends AppCompatActivity implements SensorEventListener {
-
-        private TextView accelerometerValuesTextView;
-        private TextView stepCountTextView;
-
-        private ProgressBar stepProgressBar;
-        //        private ColorBar stepColorBar;
-        private int stepCount = 0;
-        private float previousX, previousY, previousZ;
-
-        @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_main);
-
-            // Initialize the TextViews
-            accelerometerValuesTextView = findViewById(R.id.accelerometerValues);
-            stepCountTextView = findViewById(R.id.stepCountTextView);
-//            stepColorBar = findViewById(R.id.stepColorBar);
-
-            stepProgressBar = findViewById(R.id.stepProgressBar);
-        }
-
-        private float gamma = 0.8f; // Filter smoothing factor
-        private float[] gravity = new float[3]; // Gravity values
-        private float[] linearAcceleration = new float[3]; // Linear acceleration values
-
-        @Override
-        public void onSensorChanged(SensorEvent event) {
-            // Get accelerometer values
-            float x = event.values[0];
-            float y = event.values[1];
-            float z = event.values[2];
-
-            // Apply a high-pass filter to remove low-frequency components
-            float filteredX = gamma * previousX + (1 - gamma) * x;
-            float filteredY = gamma * previousY + (1 - gamma) * y;
-            float filteredZ = gamma * previousZ + (1 - gamma) * z;
-
-            // Apply a high-pass filter to remove gravity
-            gravity[0] = gamma * gravity[0] + (1 - gamma) * x;
-            gravity[1] = gamma * gravity[1] + (1 - gamma) * y;
-            gravity[2] = gamma * gravity[2] + (1 - gamma) * z;
-
-            // Calculate linear acceleration by subtracting gravity and low-frequency componets
-            linearAcceleration[0] = x - gravity[0] - filteredX;
-            linearAcceleration[1] = y - gravity[1] - filteredY;
-            linearAcceleration[2] = z - gravity[2] - filteredZ;
-
-            // Apply noise reduction techniques (averaging)
-            int numSamples = 5; // Number of samples to average
-            float sumX = 0, sumY = 0, sumZ = 0;
-
-            for (int i = 0; i < numSamples; i++) {
-                sumX += linearAcceleration[0];
-                sumY += linearAcceleration[1];
-                sumZ += linearAcceleration[2];
-            }
-
-            // Calculate the average values
-            float averageX = sumX / numSamples;
-            float averageY = sumY / numSamples;
-            float averageZ = sumZ / numSamples;
-
-            // Use the averaged values for further processing or step detection
-
-            // Update your UI or perform any other actions with the values
-            accelerometerValuesTextView.setText("Accelerometer Values: " + averageX + ", " + averageY + ", " + averageZ);
-
-            float currentX = averageX;
-            float currentY = averageY;
-            float currentZ = averageZ;
-
-            // Check for a step by detecting peaks in the accelerometer readings
-            if (isStepDetected(previousX, previousY, previousZ, currentX, currentY, currentZ)) {
-                stepCount++;
-
-                // Update UI or perform any necessary actions for a detected step
-                updateStepCount(stepCount);
-//                // Update the ColorBar based on step count
-//                updateColorBar(stepCount);
-                // Update the Progress Bar based on step count
-                updateProgressBar(stepCount);
-
-
-            }
-
-            previousX = currentX;
-            previousY = currentY;
-            previousZ = currentZ;
-        }
-
-
-//        @Override
-//        public void onSensorChanged(SensorEvent event) {
-//            // Get the accelerometer values
-//            float x = event.values[0];
-//            float y = event.values[1];
-//            float z = event.values[2];
-//
-//            // Update your UI or perform any other actions with the values
-//            accelerometerValuesTextView.setText("Accelerometer Values: " + x + ", " + y + ", " + z);
-
-//
-//            float currentX = event.values[0];
-//            float currentY = event.values[1];
-//            float currentZ = event.values[2];
-//
-//            // Check for a step by detecting peaks in the accelerometer readings
-//            if (isStepDetected(previousX, previousY, previousZ, currentX, currentY, currentZ)) {
-//                stepCount++;
-//
-//                // Update UI or perform any necessary actions for a detected step
-//                updateStepCount(stepCount);
-//            }
-//
-//            previousX = currentX;
-//            previousY = currentY;
-//            previousZ = currentZ;
-//        }
-
-        @Override
-        public void onAccuracyChanged(Sensor sensor, int accuracy) {
-            // Do nothing
-        }
-
-        public boolean isStepDetected(float previousX, float previousY, float previousZ, float currentX, float currentY, float currentZ) {
-            // Adjust these thresholds based on the characteristics of your accelerometer data
-            float stepThreshold = 2.0f; // Minimum difference in acceleration values for a step to be detected
-
-            // Check if the acceleration has crossed the threshold in the positive direction
-            if (previousY < stepThreshold && currentY >= stepThreshold) {
-                return true;
-            }
-
-            // Check if the acceleration has crossed the threshold in the negative direction
-            if (previousY > -stepThreshold && currentY <= -stepThreshold) {
-                return true;
-            }
-
-            if (previousX < stepThreshold && currentX >= stepThreshold) {
-                return true;
-            }
-
-            // Check if the acceleration has crossed the threshold in the negative direction
-            if (previousX > -stepThreshold && currentX <= -stepThreshold) {
-                return true;
-            }
-
-            if (previousZ < stepThreshold && currentZ >= stepThreshold) {
-                return true;
-            }
-
-            // Check if the acceleration has crossed the threshold in the negative direction
-            if (previousZ > -stepThreshold && currentZ <= -stepThreshold) {
-                return true;
-            }
-
-            // No step detected
-            return false;
-        }
-
-        // Call this method when you detect a step
-        public void handleStepDetection(float previousX, float previousY, float previousZ, float currentX, float currentY, float currentZ) {
-            if (isStepDetected(previousX, previousY, previousZ, currentX, currentY, currentZ)) {
-                stepCount++;
-
-                // Calculate magnitude of acceleration
-                float magnitude = calculateMagnitude(currentX, currentY, currentZ);
-
-                // Update UI or perform any necessary actions with the magnitude value
-                updateMagnitude(magnitude);
-
-                // Update UI or perform any necessary actions for a detected step
-                updateStepCount(stepCount);
-
-//                // Update the Color Bar based on step count
-//                updateColorBar(stepCount);
-                // Update the Progress Bar  based on step count
-                updateProgressBar(stepCount);
-            }
-        }
-
-        private float calculateMagnitude(float x, float y, float z) {
-            return (float) Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
-        }
-
-
-        private void updateStepCount(int count) {
-            stepCountTextView.setText(String.valueOf(count));
-        }
-
-        private void updateMagnitude(float magnitude) {
-            // Perform any necessary actions with the magnitude value
-            // For example, update UI elements, display a toast, or send the value to the game
-
-            // Update UI element
-            TextView magnitudeTextView = findViewById(R.id.magnitudeTextView);
-            magnitudeTextView.setText("Magnitude: " + magnitude);
-
-            // Display a toast message
-            Toast.makeText(this, "Magnitude: " + magnitude, Toast.LENGTH_SHORT).show();
-
-            // Send the magnitude value to the game via Bluetooth or any other communication method
-            //sendMagnitudeToGame(magnitude);
-        }
-
-        private int normalizeValue(float value, float min, float max) {
-            return (int) ((value - min) / (max - min) * 255);
-        }
-
-        private void updateProgressBar(int stepCount) {
-            int maxSteps = 100; // Maximum number of steps for the ProgressBar
-            int progress = (int) ((stepCount / (float) maxSteps) * 100);
-            stepProgressBar.setProgress(progress);
-
-//          private void updateColorBar(int stepCount) {
-//            int maxSteps = 80; // Maximum number of steps for the ProgressBar
-//           int Color = (int) ((stepCount / (float) maxSteps) * 100);
-//           stepColorBar.setColor(Color);
-
-        }
-    }
 }
-
-//    // Initialize the YouTube API client
-//          YouTube youtube = new YouTube.Builder(new NetHttpTransport(), new JacksonFactory(), null)
-//                .setYouTubeRequestInitializer(new YouTubeRequestInitializer("AIzaSyDzzdLOWBcI42JRdzAm5YRcwqtFtnUeo_E"))
-//              .setApplicationName("PersonalFit-Tracker")
-//                .build();
-//
-//
-//
-//    public static class YouTubeSearchExample {
-//        public static void main(String[] args) {
-//            // Define the search query and parameters
-//            String query = "fitness workout";
-//            long maxResults = 10;
-//
-//            // Create a new instance of the YouTube object
-//            YouTube youtube = new YouTube.Builder(Auth.HTTP_TRANSPORT, Auth.JSON_FACTORY, request -> {})
-//                    .setApplicationName("your-application-name")
-//                    .build();
-//
-//            // Execute the search request
-//            try {
-//                YouTube.Search.List searchList = youtube.search().list("snippet");
-//                searchList.setKey("YOUR_API_KEY");
-//                searchList.setQ(query);
-//                searchList.setMaxResults(maxResults);
-//                SearchListResponse response = searchList.execute();
-//
-//                // Process the search results
-//                List<SearchResult> searchResults = response.getItems();
-//                for (SearchResult result : searchResults) {
-//                    // Extract information from each search result (e.g., video ID, title, thumbnail)
-//                    String videoId = result.getId().getVideoId();
-//                    String title = result.getSnippet().getTitle();
-//                    String thumbnailUrl = result.getSnippet().getThumbnails().getDefault().getUrl();
-//
-//                    // Process the retrieved video information as needed
-//                    System.out.println("Video ID: " + videoId);
-//                    System.out.println("Title: " + title);
-//                    System.out.println("Thumbnail URL: " + thumbnailUrl);
-//                    System.out.println();
-//                }
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
-
-
-
-    //        public boolean isStepDetected(float previousX, float previousY, float previousZ, float currentX, float currentY, float currentZ) {
-//            // Adjust these thresholds based on the characteristics of your accelerometer data
-//            float stepThreshold = 2.0f; // Minimum difference in acceleration values for a step to be detected
-//
-//            // Check if the acceleration has crossed the threshold in the positive direction
-//            if (previousY < stepThreshold && currentY >= stepThreshold) {
-//                return true;
-//            }
-//
-//            // Check if the acceleration has crossed the threshold in the negative direction
-//            if (previousY > -stepThreshold && currentY <= -stepThreshold) {
-//                return true;
-//            }
-//
-//            if (previousX < stepThreshold && currentX >= stepThreshold) {
-//                return true;
-//            }
-//
-//            // Check if the acceleration has crossed the threshold in the negative direction
-//            if (previousX > -stepThreshold && currentX <= -stepThreshold) {
-//                return true;
-//            }
-//
-//            if (previousZ < stepThreshold && currentZ >= stepThreshold) {
-//                return true;
-//            }
-//
-//            // Check if the acceleration has crossed the threshold in the negative direction
-//            return previousZ > -stepThreshold && currentZ <= -stepThreshold;
-//
-//
-//            // Check for a step by detecting peaks in the accelerometer readings
-//            if (isStepDetected(previousX, previousY, previousZ, currentX, currentY, currentZ)) {
-//                stepCount++;
-//
-//                // Calculate magnitude of acceleration
-//                float magnitude = calculateMagnitude(currentX, currentY, currentZ);
-//
-//                // Update UI or perform any necessary actions with the magnitude value
-//                updateMagnitude(magnitude);
-//
-//                // Update UI or perform any necessary actions for a detected step
-//                updateStepCount(stepCount);
-////            }
-//        public boolean isStepDetected(float previousX, float previousY, float previousZ, float currentX, float currentY, float currentZ) {
-//            // Adjust these thresholds based on the characteristics of your accelerometer data
-//            float stepThreshold = 2.0f; // Minimum difference in acceleration values for a step to be detected
-//
-//            // Check if the acceleration has crossed the threshold in the positive direction
-//            if (previousY < stepThreshold && currentY >= stepThreshold) {
-//                return true;
-//            }
-//
-//            // Check if the acceleration has crossed the threshold in the negative direction
-//            if (previousY > -stepThreshold && currentY <= -stepThreshold) {
-//                return true;
-//            }
-//
-//            if (previousX < stepThreshold && currentX >= stepThreshold) {
-//                return true;
-//            }
-//
-//            // Check if the acceleration has crossed the threshold in the negative direction
-//            if (previousX > -stepThreshold && currentX <= -stepThreshold) {
-//                return true;
-//            }
-//
-//            if (previousZ < stepThreshold && currentZ >= stepThreshold) {
-//                return true;
-//            }
-//
-//            // Check if the acceleration has crossed the threshold in the negative direction
-//            if (previousZ > -stepThreshold && currentZ <= -stepThreshold) {
-//                return true;
-//            }
-//
-//            // No step detected
-//            return false;
-//        }
-//
-//        // Call this method when you detect a step
-//        public void handleStepDetection(float previousX, float previousY, float previousZ, float currentX, float currentY, float currentZ) {
-//            if (isStepDetected(previousX, previousY, previousZ, currentX, currentY, currentZ)) {
-//                stepCount++;
-//
-//                // Calculate magnitude of acceleration
-//                float magnitude = calculateMagnitude(currentX, currentY, currentZ);
-//
-//                // Update UI or perform any necessary actions with the magnitude value
-//                updateMagnitude(magnitude);
-//
-//                // Update UI or perform any necessary actions for a detected step
-//                updateStepCount(stepCount);
-//            }
-//        }
-//
-//
-//        private float calculateMagnitude(float x, float y, float z) {
-//            return (float) Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
-//        }
-//
-//
-//        private void updateStepCount(int count) {
-//            stepCountTextView.setText(String.valueOf(count));
-//        }
-//
-//        private void updateMagnitude(float magnitude) {
-//            // Perform any necessary actions with the magnitude value
-//            // For example, update UI elements, display a toast, or send the value to the game
-//
-//            // Update UI element
-//            TextView magnitudeTextView = findViewById(R.id.magnitudeTextView);
-//            magnitudeTextView.setText("Magnitude: " + magnitude);
-//
-//            // Display a toast message
-//            Toast.makeText(this, "Magnitude: " + magnitude, Toast.LENGTH_SHORT).show();
-//
-//            // Send the magnitude value to the game via Bluetooth or any other communication method
-//            //sendMagnitudeToGame(magnitude);
-//        }
-//        private int normalizeValue(float value, float min, float max) {
-//            return (int) ((value - min) / (max - min) * 255);
-//        }
-//
-//    }
-//
-
-//
-//    int normalizedValue = normalizeValue(magnitude, min, max);
-//    String dataToSend = "Hello, game device!";
-//    byte[] data = new byte[]{(byte) normalizedValue};
-//    try{
-//
-//    }
-
-
-
-//    private void sendMagnitudeToGame(float magnitude) {
-//        // Implement the code to send the magnitude value to the game
-//        // For example, using Bluetooth communication or API requests
-//        // You can use the previously provided code for Bluetooth communication to establish a connection and send data to the game
-//        // Replace the placeholder URL with your actual game's URL
-//
-//        String gameUrl = "https://www.fiteasy.shop/";
-//        // Send the magnitude value to the game using the desired method (Bluetooth, API, etc.)
-//        // Example: Send the magnitude value via Bluetooth using the connected socket
-//        if (bluetoothSocket != null && bluetoothSocket.isConnected()) {
-//            try {
-//                // Convert the magnitude value to bytes and send it via Bluetooth
-//                byte[] magnitudeBytes = ByteBuffer.allocate(4).putFloat(magnitude).array();
-//                bluetoothSocket.getOutputStream().write(magnitudeBytes);
-//            } catch (IOException e) {
-//                // Handle any IO errors
-//                e.printStackTrace();
-//            }
-//        } else {
-//            // Handle the case when the Bluetooth socket is not connected
-//            // You can display an error message or try to establish the connection again
-//        }
-//    }
-
-
-//        // Alternatively, you can send the magnitude value to the game via API requests
-//        // Example: Send the magnitude value to the game using an HTTP POST request
-//        OkHttpClient client = new OkHttpClient();
-//        MediaType mediaType = MediaType.parse("application/json");
-//        RequestBody requestBody = RequestBody.create(mediaType, "{\"magnitude\": " + magnitude + "}");
-//        Request request = new Request.Builder()
-//                .url(gameUrl)
-//                .post(requestBody)
-//                .build();
-//
-//        client.newCall(request).enqueue(new Callback() {
-//            @Override
-//            public void onFailure(Call call, IOException e) {
-//                // Handle any API request failures
-//                e.printStackTrace();
-//            }
-//
-//            @Override
-//            public void onResponse(Call call, Response response) throws IOException {
-//                // Handle the API response
-//                if (response.isSuccessful()) {
-//                    // The magnitude value was successfully sent to the game
-//                    // You can perform any necessary actions based on the response
-//                } else {
-//                    // The API request was not successful
-//                    // You can handle the error case or retry the request if needed
-//                }
-//            }
-//        });
-//    }
-
-
-
-
-
-//    public class YourActivity extends AppCompatActivity implements SensorEventListener {
-//
-//        private TextView accelerometerValuesTextView;
-//
-////        @Override
-////        protected void onCreate(Bundle savedInstanceState) {
-////            super.onCreate(savedInstanceState);
-////            setContentView(R.layout.activity_main);
-////            // Initialize the TextView
-////            accelerometerValuesTextView = findViewById(R.id.accelerometerValues);
-////
-////        }
-//
-////        @Override
-////        public void onSensorChanged(SensorEvent event) {
-////            // Get the accelerometer values
-////            float x = event.values[0];
-////            float y = event.values[1];
-////            float z = event.values[2];
-////
-////            // Update your UI or perform any other actions with the values
-////            accelerometerValuesTextView.setText("Accelerometer Values: " + x + ", " + y + ", " + z);
-////        }
-////
-////
-//        private TextView stepCountTextView;
-//
-//        @Override
-//        protected void onCreate(Bundle savedInstanceState) {
-//            super.onCreate(savedInstanceState);
-//            setContentView(R.layout.activity_main);
-//            // Initialize the TextView
-//            accelerometerValuesTextView = findViewById(R.id.accelerometerValues);
-//
-//            // Find the TextView by its ID
-//            TextView stepCountTextView = findViewById(R.id.stepCountTextView);
-//
-//           // Update the step count text whenever a step is detected
-//            private void updateStepCount(int count) {
-//                stepCountTextView.setText(String.valueOf(count));
-//            }
-//
-//
-//        }
-//        @Override
-//        public void onSensorChanged(SensorEvent event) {
-//            // Get the accelerometer values
-//            float x = event.values[0];
-//            float y = event.values[1];
-//            float z = event.values[2];
-//
-//            // Update your UI or perform any other actions with the values
-//            accelerometerValuesTextView.setText("Accelerometer Values: " + x + ", " + y + ", " + z);
-//
-//
-//
-//            float currentY = event.values[1]; // Assuming Y-axis is vertical
-//            float currentX = event.values[0];
-//            float currentZ = event.values[2];
-//
-//
-//
-//            // Check for a step by detecting peaks in the accelerometer readings
-//            if (isStepDetected(previousX,previousY,previousZ, currentX,currentY,currentZ)) {
-//                stepCount++;
-//
-//                // Update UI or perform any necessary actions for a detected step
-//                updateStepCount(stepCount);
-//            }
-//
-//            previousX = currentX;
-//            previousY = currentY;
-//            previousZ = currentZ;
-//
-//        }
-//
-//        @Override
-//        public void onAccuracyChanged(Sensor sensor, int accuracy) {
-//            // Do nothing
-//        }
-//
-//
-//
-//    }
-//    private boolean isStepDetected(float  previousX,float  previousY,float  previousZ, float currentX,float currentY,float currentZ) {
-//        // Adjust these thresholds based on the characteristics of your accelerometer data
-//        float stepThreshold = 2.0f; // Minimum difference in acceleration values for a step to be detected
-//
-//        // Check if the acceleration has crossed the threshold in the positive direction
-//        if (previousY < stepThreshold && currentY >= stepThreshold) {
-//            return true;
-//        }
-//
-//        // Check if the acceleration has crossed the threshold in the negative direction
-//        if (previousY > -stepThreshold && currentY <= -stepThreshold) {
-//            return true;
-//        }
-//
-//        if (previousX < stepThreshold && currentX >= stepThreshold) {
-//            return true;
-//        }
-//
-//        // Check if the acceleration has crossed the threshold in the negative direction
-//        if (previousX > -stepThreshold && currentX <= -stepThreshold) {
-//            return true;
-//        }
-//
-//        if (previousZ < stepThreshold && currentZ >= stepThreshold) {
-//            return true;
-//        }
-//
-//        // Check if the acceleration has crossed the threshold in the negative direction
-//        if (previousZ > -stepThreshold && currentZ <= -stepThreshold) {
-//            return true;
-//        }
-//
-//
-//
-//        return false;
-//    }
-//
-//
-//
-//
-//    private void updateStepCount(int count) {
-//        // Update a TextView or any other UI element with the step count
-//        stepCountTextView.setText(String.valueOf(count));
-//    }
-//}
-
-
-
-//    public class YourActivity extends AppCompatActivity implements SensorEventListener {
-//
-//
-//        @Override
-//        public void onSensorChanged(SensorEvent event) {
-//            // Get the accelerometer values
-//            float x = event.values[0];
-//            float y = event.values[1];
-//            float z = event.values[2];
-//
-//            // Update your UI or perform any other actions with the values
-//            accelerometerValuesTextView.setText("Accelerometer Values: " + x + ", " + y + ", " + z);
-//        }
-//
-//        @Override
-//        public void onAccuracyChanged(Sensor sensor, int accuracy) {
-//            // Handle accuracy changes if needed
-//        }
-//        TextView accelerometerValuesTextView = findViewById(R.id.accelerometerValues);
-//// As you receive accelerometer data, update the text of accelerometerValuesTextView with the new values
-//
-//    }
-
-
-
-//
-//    private boolean isStepDetected(float previousY, float currentY) {
-//        // Adjust these thresholds based on the characteristics of your accelerometer data
-//        float stepThreshold = 2.0f; // Minimum difference in acceleration values for a step to be detected
-//
-//        // Check if the acceleration has crossed the threshold in the positive direction
-//        if (previousY < stepThreshold && currentY >= stepThreshold) {
-//            return true;
-//        }
-//
-//        // Check if the acceleration has crossed the threshold in the negative direction
-//        if (previousY > -stepThreshold && currentY <= -stepThreshold) {
-//            return true;
-//        }
-//
-//        return false;
-//    }
-//
-//
-//
-//    private void updateStepCount(int count) {
-//        // Update a TextView or any other UI element with the step count
-//        stepCountTextView.setText(String.valueOf(count));
-//    }
-//}
